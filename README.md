@@ -326,16 +326,59 @@ Triggers:
 - **pull requests**: build + test with the committed `pixi.lock`;
 - **manual run** (Actions → *Build installers* → *Run workflow*): updates Activity Browser
   to the newest beta first (checkbox, on by default). The lock used is in the artifact;
-- **tag `v*`**: build + test, then attach both installers to a GitHub release:
+- **tag `v*`**: build + test with the committed `pixi.lock`, then publish both installers
+  as a GitHub release. See *Making a release* below.
 
-  ```bash
-  git tag v0.1.0 && git push origin v0.1.0
-  ```
+### Making a release
 
-  Versions follow [semantic versioning](https://semver.org): bump `version` in `pixi.toml`
-  first (patch `0.1.1` for fixes/updated packages, minor `0.2.0` for new features or
-  dependencies, major for breaking changes such as a new Python or Brightway generation).
-  The build fails if the tag isn't `v` + that version, so file names and release always match.
+A tag build never updates packages itself; it uses exactly what `pixi.lock` says. So bring
+the lock up to date first, commit it, then tag:
+
+```bash
+git pull
+
+# 1. update packages (pick what you need, see "Updating versions")
+pixi run update-ab        # newest Activity Browser beta
+pixi update               # or: everything, within the constraints in pixi.toml
+
+# 2. check it locally (optional, but catches most problems before CI)
+pixi run python tests/smoke.py --launch
+pixi run -e build installer        # builds the installer for your own OS
+
+# 3. bump the version in pixi.toml (semantic versioning, see below), e.g. 0.1.0 → 0.2.0
+
+# 4. commit + push, and wait for the CI run on main to go green (Actions tab)
+git commit -am "Release 0.2.0: newest AB beta"
+git push
+
+# 5. tag → CI builds + tests both platforms again and publishes the release
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+After ~15 min the release appears under *Releases* with
+`LCA-Toolkit-<version>-Windows-x86_64.exe` and `LCA-Toolkit-<version>-macOS-arm64.pkg`.
+If any build or install test fails, nothing is published. Fix the problem, then move the
+tag to the fixed commit (`git tag -f v0.2.0 && git push -f origin v0.2.0`) or use the
+next patch version.
+
+Versions follow [semantic versioning](https://semver.org): patch (`0.1.1`) for fixes and
+updated packages, minor (`0.2.0`) for new features or dependencies, major for breaking
+changes such as a new Python or Brightway generation. The build fails if the tag isn't
+`v` + the `version` in `pixi.toml`, so file names and release always match.
+
+Things to keep in mind:
+- **Who can download it:** a release has the same visibility as the repository. While the
+  repo is private, only collaborators can download it; share the files with students
+  through your course platform instead, or make the repo public.
+- **The teaching-material token is inside the installers** (in `material.json`, as part of
+  the clone URL) when the `MATERIAL_GIT_URL` secret is set. Don't publish such installers
+  anywhere public. For a public release, build without the secret, or accept that the
+  read-only token can be extracted (and revoke it when the course ends).
+- **Upgrading users:** installing a new version requires uninstalling the old one first
+  (see *Known caveats*). Tell students in the release notes.
+- A manual run (Actions → *Run workflow*) gives the same installers as artifacts without
+  publishing anything. Use it for test builds; the artifacts expire after 90 days.
 
 ---
 

@@ -273,8 +273,10 @@ Triggers:
 
 ## Known caveats
 
-- **Unsigned installers.** macOS requires right-click → Open, and Windows SmartScreen
-  requires "More info → Run anyway". Proper signing needs an Apple Developer ID and a
+- **Unsigned installers.** macOS blocks the `.pkg` with *"Apple could not verify … is free
+  of malware"*. Since macOS 15, right-click → Open no longer bypasses this, and users
+  have to click **Open Anyway** in System Settings → Privacy & Security (see the install
+  guide). Windows SmartScreen requires "More info → Run anyway". Proper signing needs an Apple Developer ID and a
   Windows code-signing certificate, plus extra constructor settings
   (`signing_identity_name`, `notarization_identity_name`, `signing_certificate`).
 - **Windows paths with spaces.** constructor refuses install paths with spaces. If the

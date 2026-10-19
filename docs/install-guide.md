@@ -17,10 +17,14 @@ is needed during installation.
 ## macOS (Apple Silicon: M1 or newer)
 
 1. Download `LCA-Toolkit-…-macOS-arm64.pkg`.
-2. **Right-click** the file → **Open** → **Open** (a plain double-click is blocked because
-   the installer isn't signed).
-3. Choose "Install for me only" and finish the installer.
-4. Start **Activity Browser (LCA Toolkit)** or **JupyterLab (LCA Toolkit)** from
+2. Double-click it. macOS says *Apple could not verify "LCA-Toolkit-….pkg" is free of
+   malware…*, because the installer isn't signed by an Apple developer account.
+   Click **Done** (not "Move to Trash").
+3. Open **System Settings → Privacy & Security**, scroll down to the message
+   *"LCA-Toolkit-….pkg" was blocked…* and click **Open Anyway**. Enter your Mac password
+   and confirm **Open Anyway** again. The installer starts.
+4. Choose "Install for me only" and finish the installer.
+5. Start **Activity Browser (LCA Toolkit)** or **JupyterLab (LCA Toolkit)** from
    *Applications* in your home folder (Finder → Go → Home → Applications), or with
    Spotlight (⌘ Space).
 

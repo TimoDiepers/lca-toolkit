@@ -36,8 +36,10 @@ EXIT_PROJECT_EXISTS = 3
 def config_path() -> Path:
     if sys.platform == "win32":
         base = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming"))
-    else:
+    elif sys.platform == "darwin":
         base = Path.home() / "Library" / "Application Support"
+    else:
+        base = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config")
     return base / "lca-toolkit" / "config.json"
 
 

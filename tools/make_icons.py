@@ -1,4 +1,4 @@
-"""Render the shortcut icons (recipe/shortcuts/icons/*.svg) to .icns (macOS) and .ico (Windows).
+"""Render the shortcut icons (recipe/shortcuts/icons/*.svg) to .icns (macOS), .ico (Windows), .png (Linux).
 
 Run with `pixi run -e build icons` after editing an SVG, and commit the generated files, so
 the installer build needs no drawing tools. In each SVG, the element with id="label" (the
@@ -20,6 +20,7 @@ ICON_DIR = Path(__file__).resolve().parent.parent / "recipe" / "shortcuts" / "ic
 LABEL_MIN_PX = 48  # below this, drop the "LCA" lettering
 ICO_SIZES = [16, 24, 32, 48, 64, 128, 256]
 ICNS_SIZES = [16, 32, 64, 128, 256, 512, 1024]  # iconset: 16, 32, 128, 256, 512 at @1x and @2x
+PNG_SIZE = 256  # Linux .desktop icon
 MAC_SCALE = 0.894  # rounded square 90 → ~80.5 % of the canvas (Apple's 824/1024 grid)
 
 
@@ -58,7 +59,8 @@ def main() -> None:
         ico = [render(variant(svg, s, mac=False), s) for s in ICO_SIZES]
         ico[-1].save(src.with_suffix(".ico"), sizes=[(s, s) for s in ICO_SIZES], append_images=ico[:-1])
         write_icns(svg, src.with_suffix(".icns"))
-        print(f"{src.name} → {src.stem}.ico, {src.stem}.icns")
+        render(variant(svg, PNG_SIZE, mac=False), PNG_SIZE).save(src.with_suffix(".png"))
+        print(f"{src.name} → {src.stem}.ico, {src.stem}.icns, {src.stem}.png")
 
 
 if __name__ == "__main__":

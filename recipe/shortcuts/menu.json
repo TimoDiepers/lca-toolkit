@@ -28,6 +28,18 @@
           ],
           "CFBundleName": "LCA Browser",
           "CFBundleIdentifier": "io.github.lca-toolkit.activity-browser"
+        },
+        "linux": {
+          "activate": false,
+          "command": [
+            "bash",
+            "-c",
+            "eval \"$('{{ PREFIX }}/_conda' shell.bash activate '{{ PREFIX }}')\" && exec activity-browser"
+          ],
+          "Categories": [
+            "Science",
+            "Education"
+          ]
         }
       }
     },
@@ -60,6 +72,18 @@
           ],
           "CFBundleName": "LCA Notebooks",
           "CFBundleIdentifier": "io.github.lca-toolkit.jupyterlab"
+        },
+        "linux": {
+          "activate": false,
+          "command": [
+            "bash",
+            "-c",
+            "eval \"$('{{ PREFIX }}/_conda' shell.bash activate '{{ PREFIX }}')\" && exec python '{{ PREFIX }}/share/lca-toolkit/launcher.py' lab"
+          ],
+          "Categories": [
+            "Science",
+            "Education"
+          ]
         }
       }
     }

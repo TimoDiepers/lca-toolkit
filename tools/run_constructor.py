@@ -8,6 +8,8 @@ toolkit is replaced (after asking); any other folder is still refused.
   swaps in installer/macos_checks_before_install.sh when constructor renders it.
 - Windows: make_installer.py writes a patched copy of constructor's NSIS template
   (see patched_nsis_template) and passes it as `nsis_template`.
+- Linux: the .sh installer's header (constructor's header.sh) is patched when constructor
+  reads it (see SH_EXISTS / SH_REPLACE_EXISTING).
 
 If constructor changes the patched code, the asserts below fail the build instead of
 silently producing an installer without the patch.
@@ -68,6 +70,37 @@ Function OnDirectoryLeave
 """
 
 
+SH_EXISTS = r"""if [ "$FORCE" = "0" ] && [ -e "$PREFIX" ]; then
+    printf "ERROR: File or directory already exists: '%s'\\n" "$PREFIX" >&2
+    printf "If you want to update an existing installation, use the -u option.\\n" >&2
+    exit 1
+"""
+
+SH_REPLACE_EXISTING = r"""# LCA Toolkit patch (tools/run_constructor.py): replace an existing installation of this
+# toolkit instead of refusing. Batch installs (-b) replace without asking.
+if [ "$FORCE" = "0" ] && [ -f "$PREFIX/conda-meta/history" ] && [ -e "$PREFIX/{{ conda_exe_name }}" ]; then
+    if [ "$BATCH" = "0" ]; then
+        printf "\\n{{ installer_name }} is already installed in '%s'.\\n" "$PREFIX"
+        printf "Replace it with version {{ installer_version }}? Your notebooks, teaching material\\n"
+        printf "and Brightway projects are kept. [yes|no]\\n"
+        printf "[yes] >>> "
+        read -r ans
+        case "$ans" in
+            ""|[Yy]*) ;;
+            *) printf "Installation cancelled.\\n"; exit 1 ;;
+        esac
+    fi
+    printf "Removing the existing installation in '%s'\\n" "$PREFIX"
+    rm -rf "$PREFIX"
+fi
+""" + SH_EXISTS
+
+
+def patched_sh_header(original: str) -> str:
+    assert original.count(SH_EXISTS) == 1, "constructor's header.sh changed; update tools/run_constructor.py"
+    return original.replace(SH_EXISTS, SH_REPLACE_EXISTING)
+
+
 def patched_nsis_template() -> str:
     from constructor import winexe
 
@@ -77,7 +110,7 @@ def patched_nsis_template() -> str:
 
 
 def main() -> int:
-    from constructor import osxpkg
+    from constructor import osxpkg, shar
     from constructor.main import main as constructor_main
 
     original = osxpkg.move_script
@@ -88,6 +121,9 @@ def main() -> int:
         return original(src, dst, info, **kwargs)
 
     osxpkg.move_script = move_script
+
+    original_header = shar.read_header_template
+    shar.read_header_template = lambda: patched_sh_header(original_header())
     return constructor_main(sys.argv[1:])
 
 

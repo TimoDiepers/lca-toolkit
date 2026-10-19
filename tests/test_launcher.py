@@ -19,6 +19,7 @@ work = Path(tempfile.mkdtemp())
 os.environ["BRIGHTWAY2_DIR"] = str(work / "bw")
 # keep the launcher's per-user config.json out of the real home/AppData
 os.environ["HOME"] = os.environ["APPDATA"] = str(work / "home")
+os.environ.pop("XDG_CONFIG_HOME", None)
 launcher = Path(sys.prefix) / "share" / "lca-toolkit" / "launcher.py"
 
 

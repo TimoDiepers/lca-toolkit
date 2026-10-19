@@ -18,7 +18,8 @@ args = parser.parse_args()
 
 import bw2calc  # noqa: E402
 
-solver = "PYPARDISO" if sys.platform == "win32" else "UMFPACK"
+# pypardiso (Intel MKL) on Windows and Linux, scikit-umfpack on macOS (see pixi.toml)
+solver = "UMFPACK" if sys.platform == "darwin" else "PYPARDISO"
 assert getattr(bw2calc, solver), f"bw2calc is not using {solver}"
 print(f"bw2calc {bw2calc.__version__}: {solver} active")
 

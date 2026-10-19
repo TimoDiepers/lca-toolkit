@@ -3,8 +3,7 @@ name = "lca-toolkit"
 version = "0.1.0"  # installer version (semver); bump for each release, tag must be v<version>
 description = "Brightway 2.5 + Activity Browser 3 (beta) + JupyterLab, packaged as one-click installers"
 channels = ["conda-forge"]
-# osx-64 (Intel Mac) is not supported: conda-forge has no qt6-webengine build for it.
-platforms = ["osx-arm64", "win-64"]
+platforms = ["osx-arm64", "osx-64", "win-64", "linux-64"]
 
 # --- The environment that ends up in the installers -----------------------------
 # Edit dependencies here, then run `pixi lock` (or any pixi command) to update pixi.lock.
@@ -16,19 +15,35 @@ pip = "*"
 numpy = "*"
 scipy = "*"
 lxml = "*"
-pyside6 = ">=6.5,<6.12"
-qt6-webengine = "*"
 jupyterlab = "*"
 ipykernel = "*"
 ipywidgets = "*"
-matplotlib = "*"
+matplotlib-base = "*"  # not `matplotlib`: that pulls in a second Qt
 git = "*"  # used by the launcher to fetch/update the optional teaching material
 
+# Qt for Activity Browser. From conda-forge where it has Qt WebEngine (which AB needs) ...
 [target.osx-arm64.dependencies]
-scikit-umfpack = "*"
+pyside6 = ">=6.5,<6.12"
+qt6-webengine = "*"
+scikit-umfpack = "*"  # fast sparse solver for bw2calc
 
 [target.win-64.dependencies]
+pyside6 = ">=6.5,<6.12"
+qt6-webengine = "*"
+pypardiso = "*"  # fast sparse solver for bw2calc (Intel MKL)
+
+[target.linux-64.dependencies]
+pyside6 = ">=6.5,<6.12"
+qt6-webengine = "*"
 pypardiso = "*"
+
+[target.osx-64.dependencies]
+scikit-umfpack = "*"
+
+# ... and from PyPI on Intel Macs: conda-forge has no qt6-webengine for osx-64, while the
+# PyPI wheels (universal2) bundle their own Qt including WebEngine.
+[target.osx-64.pypi-dependencies]
+pyside6 = ">=6.5,<6.12"
 
 [pypi-dependencies]
 # Newest beta-branch build at lock time; refresh with `pixi run update-ab`.

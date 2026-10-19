@@ -18,7 +18,9 @@ jobs:
       matrix:
         include:
           - { os: macos-14, platform: osx-arm64 }
+          - { os: macos-15-intel, platform: osx-64 }
           - { os: windows-latest, platform: win-64 }
+          - { os: ubuntu-latest, platform: linux-64 }
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     steps:
@@ -54,7 +56,7 @@ jobs:
       - name: Install and smoke-test (macOS)
         if: runner.os == 'macOS'
         run: |
-          installer -pkg build/osx-arm64/installer/*.pkg -target CurrentUserHomeDirectory
+          installer -pkg build/${{ matrix.platform }}/installer/*.pkg -target CurrentUserHomeDirectory
           ~/Library/lca-toolkit/bin/python tests/smoke.py --launch
           ~/Library/lca-toolkit/bin/python tests/test_launcher.py
           ls ~/Applications/"LCA Browser.app" ~/Applications/"LCA Notebooks.app"
@@ -64,7 +66,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           touch ~/Library/lca-toolkit/old-install-marker
-          installer -pkg build/osx-arm64/installer/*.pkg -target CurrentUserHomeDirectory
+          installer -pkg build/${{ matrix.platform }}/installer/*.pkg -target CurrentUserHomeDirectory
           test ! -e ~/Library/lca-toolkit/old-install-marker  # old folder was replaced
           ~/Library/lca-toolkit/bin/python tests/smoke.py
           ls ~/Applications/"LCA Browser.app" ~/Applications/"LCA Notebooks.app"
@@ -72,7 +74,7 @@ jobs:
       - name: Install for all users and smoke-test (macOS)
         if: runner.os == 'macOS'
         run: |
-          sudo installer -pkg build/osx-arm64/installer/*.pkg -target /
+          sudo installer -pkg build/${{ matrix.platform }}/installer/*.pkg -target /
           /Library/lca-toolkit/bin/python tests/smoke.py
           ls /Applications/"LCA Browser.app" /Applications/"LCA Notebooks.app"
           grep -o "'/Library/lca-toolkit/_conda'" /Applications/"LCA Browser.app"/Contents/MacOS/*-script
@@ -115,6 +117,29 @@ jobs:
           Get-ChildItem -Recurse "$env:ProgramData\Microsoft\Windows\Start Menu\Programs" -Filter "LCA *.lnk" | Tee-Object -Variable lnks
           if (-not $lnks) { throw "All-users Start Menu shortcuts missing" }
 
+      - name: Install and smoke-test (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          bash build/linux-64/installer/*.sh -b -p ~/lca-toolkit
+          ~/lca-toolkit/bin/python tests/smoke.py --launch
+          ~/lca-toolkit/bin/python tests/test_launcher.py
+          ls ~/.local/share/applications/ | grep -i "lca"
+
+      - name: Reinstall over the existing installation (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          touch ~/lca-toolkit/old-install-marker
+          bash build/linux-64/installer/*.sh -b -p ~/lca-toolkit
+          test ! -e ~/lca-toolkit/old-install-marker  # old folder was replaced
+          ~/lca-toolkit/bin/python tests/smoke.py
+
+      - name: Install for all users and smoke-test (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo bash build/linux-64/installer/*.sh -b -p /opt/lca-toolkit
+          /opt/lca-toolkit/bin/python tests/smoke.py
+          ls /usr/share/applications/ | grep -i "lca"
+
       - uses: actions/upload-artifact@v4
         with:
           name: installer-${{ matrix.platform }}
@@ -138,9 +163,13 @@ jobs:
         run: |
           cp build/win-64/installer/*.exe LCA-Toolkit-Windows-x86_64.exe
           cp build/osx-arm64/installer/*.pkg LCA-Toolkit-macOS-arm64.pkg
+          cp build/osx-64/installer/*.pkg LCA-Toolkit-macOS-x86_64.pkg
+          cp build/linux-64/installer/*.sh LCA-Toolkit-Linux-x86_64.sh
       - uses: softprops/action-gh-release@v2
         with:
           files: |
             build/*/installer/*
             LCA-Toolkit-Windows-x86_64.exe
             LCA-Toolkit-macOS-arm64.pkg
+            LCA-Toolkit-macOS-x86_64.pkg
+            LCA-Toolkit-Linux-x86_64.sh

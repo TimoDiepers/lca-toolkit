@@ -54,11 +54,17 @@ WHEEL_DIR_IN_PREFIX = "lca-toolkit-wheels"  # temporary, removed after post-inst
 BUNDLE_ID_PREFIX = "io.github.lca-toolkit."  # macOS CFBundleIdentifier prefix used in menu.json
 
 
+PLATFORMS = ["osx-arm64", "osx-64", "win-64", "linux-64"]
+
+
 def current_platform() -> str:
+    machine = platform.machine().lower()
     if sys.platform == "win32":
         return "win-64"
-    if sys.platform == "darwin" and platform.machine() == "arm64":
-        return "osx-arm64"
+    if sys.platform == "darwin":
+        return "osx-arm64" if machine == "arm64" else "osx-64"
+    if sys.platform.startswith("linux") and machine in ("x86_64", "amd64"):
+        return "linux-64"
     raise SystemExit(f"Unsupported build platform: {sys.platform}/{platform.machine()}")
 
 
@@ -126,8 +132,11 @@ def write_post_install(out: Path, plat: str, wheels: list[Path], material: dict 
             f'"$PREFIX/bin/python" -m pip install {pip_args} '
             f'--find-links "$PREFIX/{WHEEL_DIR_IN_PREFIX}" -r "$PREFIX/{WHEEL_DIR_IN_PREFIX}/requirements.txt"\n'
             f'rm -rf "$PREFIX/{WHEEL_DIR_IN_PREFIX}"\n'
-            + (render_template(INSTALLER_DIR / "macos_material_dialogs.sh", material) if material else "")
         )
+        if material:
+            dialogs = "linux_material_prompts.sh" if plat == "linux-64" else "macos_material_dialogs.sh"
+            with script.open("a") as f:
+                f.write(render_template(INSTALLER_DIR / dialogs, material))
     return script.name
 
 
@@ -188,10 +197,18 @@ def construct_yaml(
         }
         if material:
             cfg["post_install_pages"] = ["material_pages.nsi"]
+    elif plat == "linux-64":
+        cfg |= {
+            "installer_type": "sh",
+            "installer_filename": f"{NAME}-{version}-Linux-x86_64.sh",
+            # all users: run the installer with sudo and choose e.g. /opt/lca-toolkit
+            "default_prefix": f"$HOME/{PREFIX_DIR}",
+        }
     else:
+        arch = "arm64" if plat == "osx-arm64" else "x86_64"
         cfg |= {
             "installer_type": "pkg",
-            "installer_filename": f"{NAME}-{version}-macOS-arm64.pkg",
+            "installer_filename": f"{NAME}-{version}-macOS-{arch}.pkg",
             # "Install for me only" -> ~/Library/<pkg_name>, shortcuts in ~/Applications;
             # "Install for all users" (admin) -> /Library/<pkg_name>, shortcuts in /Applications.
             # Without the Library component a system install would target / (read-only on macOS).
@@ -205,7 +222,7 @@ def construct_yaml(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--platform", default=current_platform(), choices=["osx-arm64", "win-64"])
+    parser.add_argument("--platform", default=current_platform(), choices=PLATFORMS)
     parser.add_argument("--version", default=_workspace_version())
     parser.add_argument("--no-build", action="store_true", help="only render inputs, don't run constructor")
     args = parser.parse_args()
@@ -231,9 +248,9 @@ def main() -> None:
                 render_template(INSTALLER_DIR / "windows_material_pages.nsi", material)
             )
     post_install = write_post_install(out, args.platform, wheels, material)
-    if args.platform == "osx-arm64":
+    if args.platform.startswith("osx-"):
         write_pre_install_osx(out)
-    else:
+    elif args.platform == "win-64":
         from run_constructor import patched_nsis_template
 
         (out / "main.nsi.tmpl").write_text(patched_nsis_template())

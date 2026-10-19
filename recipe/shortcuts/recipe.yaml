@@ -1,7 +1,7 @@
 # Tiny conda package that only carries menu.json and the shortcut icons. constructor lists it under
 # `menu_packages`, so menuinst creates the shortcuts at install time.
 context:
-  version: "1.2"
+  version: "1.3"
 
 package:
   name: lca-toolkit-shortcuts  # keep in sync with SHORTCUTS_PACKAGE in tools/make_installer.py
@@ -18,7 +18,7 @@ build:
       then:
         - mkdir -p "$PREFIX/Menu"
         - cp menu.json "$PREFIX/Menu/lca-toolkit.json"
-        - cp icons/*.icns icons/*.ico "$PREFIX/Menu/"
+        - cp icons/*.icns icons/*.ico icons/*.png "$PREFIX/Menu/"
       else:
         - if not exist "%PREFIX%\Menu" mkdir "%PREFIX%\Menu"
         - copy menu.json "%PREFIX%\Menu\lca-toolkit.json"

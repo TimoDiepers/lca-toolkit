@@ -22,6 +22,7 @@ jupyterlab = "*"
 ipykernel = "*"
 ipywidgets = "*"
 matplotlib = "*"
+git = "*"  # used by the launcher to fetch/update the optional teaching material
 
 [target.osx-arm64.dependencies]
 scikit-umfpack = "*"

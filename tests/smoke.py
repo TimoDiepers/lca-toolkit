@@ -34,7 +34,7 @@ print("activity-browser", version("activity-browser"), "| jupyterlab", version("
 if args.launch:
     scripts = Path(sys.prefix) / ("Scripts" if sys.platform == "win32" else "bin")
     exe = scripts / ("activity-browser.exe" if sys.platform == "win32" else "activity-browser")
-    env = os.environ | {"QT_QPA_PLATFORM": "offscreen", "BRIGHTWAY_DIR": tempfile.mkdtemp()}
+    env = os.environ | {"QT_QPA_PLATFORM": "offscreen", "BRIGHTWAY2_DIR": tempfile.mkdtemp()}
     proc = subprocess.Popen([str(exe)], env=env)
     time.sleep(30)
     alive = proc.poll() is None

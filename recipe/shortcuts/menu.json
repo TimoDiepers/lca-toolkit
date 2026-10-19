@@ -6,18 +6,23 @@
     {
       "name": "Activity Browser (LCA Toolkit)",
       "description": "Activity Browser 3 (beta) for Brightway 2.5",
-      "command": ["{{ PREFIX }}/bin/activity-browser"],
+      "command": [
+        "{{ PREFIX }}/bin/activity-browser"
+      ],
       "activate": true,
       "terminal": false,
       "platforms": {
         "win": {
-          "command": ["{{ PREFIX }}/Scripts/activity-browser.exe"],
+          "command": [
+            "{{ PREFIX }}/Scripts/activity-browser.exe"
+          ],
           "desktop": true
         },
         "osx": {
           "activate": false,
           "command": [
-            "bash", "-c",
+            "bash",
+            "-c",
             "eval \"$('{{ PREFIX }}/_conda' shell.bash activate '{{ PREFIX }}')\" && exec activity-browser"
           ],
           "CFBundleName": "Activity Browser LCA Toolkit",
@@ -27,23 +32,29 @@
     },
     {
       "name": "JupyterLab (LCA Toolkit)",
-      "description": "JupyterLab with Brightway 2.5, opens in the LCA-Notebooks folder in your home directory",
-      "command": ["{{ PREFIX }}/bin/jupyter-lab"],
+      "description": "JupyterLab with Brightway 2.5; opens in the teaching material folder, or LCA-Notebooks in your home folder",
+      "command": [
+        "{{ PYTHON }}",
+        "{{ PREFIX }}/share/lca-toolkit/launcher.py",
+        "lab"
+      ],
       "activate": true,
       "terminal": true,
       "platforms": {
         "win": {
           "command": [
-            "cmd", "/c",
-            "if not exist \"%USERPROFILE%\\LCA-Notebooks\" mkdir \"%USERPROFILE%\\LCA-Notebooks\" & \"{{ PREFIX }}\\Scripts\\jupyter-lab.exe\" --notebook-dir=\"%USERPROFILE%\\LCA-Notebooks\""
+            "{{ PYTHON }}",
+            "{{ PREFIX }}/share/lca-toolkit/launcher.py",
+            "lab"
           ],
           "desktop": true
         },
         "osx": {
           "activate": false,
           "command": [
-            "bash", "-c",
-            "eval \"$('{{ PREFIX }}/_conda' shell.bash activate '{{ PREFIX }}')\" && mkdir -p \"$HOME/LCA-Notebooks\" && exec jupyter-lab --notebook-dir=\"$HOME/LCA-Notebooks\""
+            "bash",
+            "-c",
+            "eval \"$('{{ PREFIX }}/_conda' shell.bash activate '{{ PREFIX }}')\" && exec python '{{ PREFIX }}/share/lca-toolkit/launcher.py' lab"
           ],
           "CFBundleName": "JupyterLab LCA Toolkit",
           "CFBundleIdentifier": "io.github.lca-toolkit.jupyterlab"

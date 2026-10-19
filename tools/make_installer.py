@@ -7,7 +7,16 @@ constructor only understands conda packages, so this script:
 1. turns the locked conda packages into exact constructor specs,
 2. downloads (and hash-checks) the locked PyPI wheels and bundles them as extra files,
 3. adds a post-install step that pip-installs those wheels offline (--no-index),
-4. renders construct.yaml and runs constructor.
+4. ships launcher/launcher.py (used by the JupyterLab shortcut) into the environment,
+5. optionally adds the "teaching material" steps (see below),
+6. renders construct.yaml and runs constructor.
+
+Teaching material (optional): set MATERIAL_GIT_URL (git URL, may contain a read-only
+token) and optionally MATERIAL_NAME (folder name, default: repo name) and MATERIAL_BRANCH.
+The installer then offers to clone it into a folder of the user's choice (default:
+Documents) and, if they do, to restore a Brightway project backup (.tar.gz) with bw2io.
+Windows: extra installer pages (installer/windows_material_pages.nsi). macOS: dialogs
+from the post-install script (installer/macos_material_dialogs.sh).
 
 Run via `pixi run -e build installer` (after `build-shortcuts`, which the task does).
 """
@@ -16,6 +25,8 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
+import os
 import platform
 import shutil
 import subprocess
@@ -27,6 +38,9 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 LOCK = ROOT / "pixi.lock"
+LAUNCHER = ROOT / "launcher" / "launcher.py"
+INSTALLER_DIR = ROOT / "installer"
+SHARE_IN_PREFIX = "share/lca-toolkit"  # launcher.py + material.json; keep in sync with menu.json
 SHORTCUTS_CHANNEL = ROOT / "build" / "channel"
 
 # --- Names --------------------------------------------------------------------
@@ -80,7 +94,19 @@ def download_wheels(pypi: list[dict], dest: Path) -> list[Path]:
     return wheels
 
 
-def write_post_install(out: Path, plat: str, wheels: list[Path]) -> str:
+def material_from_env() -> dict | None:
+    url = os.environ.get("MATERIAL_GIT_URL", "").strip()
+    if not url:
+        return None
+    name = os.environ.get("MATERIAL_NAME") or url.rstrip("/").rsplit("/", 1)[-1].removesuffix(".git")
+    return {"url": url, "name": name, "branch": os.environ.get("MATERIAL_BRANCH") or None}
+
+
+def render_template(path: Path, material: dict) -> str:
+    return path.read_text().replace("@MATERIAL_NAME@", material["name"])
+
+
+def write_post_install(out: Path, plat: str, wheels: list[Path], material: dict | None) -> str:
     (out / "requirements.txt").write_text("".join(f"{w.name.split('-')[0]}=={w.name.split('-')[1]}\n" for w in wheels))
     pip_args = "--no-index --no-deps --disable-pip-version-check --no-warn-script-location"
     if plat == "win-64":
@@ -99,6 +125,7 @@ def write_post_install(out: Path, plat: str, wheels: list[Path]) -> str:
             f'"$PREFIX/bin/python" -m pip install {pip_args} '
             f'--find-links "$PREFIX/{WHEEL_DIR_IN_PREFIX}" -r "$PREFIX/{WHEEL_DIR_IN_PREFIX}/requirements.txt"\n'
             f'rm -rf "$PREFIX/{WHEEL_DIR_IN_PREFIX}"\n'
+            + (render_template(INSTALLER_DIR / "macos_material_dialogs.sh", material) if material else "")
         )
     return script.name
 
@@ -123,9 +150,14 @@ def write_pre_install_osx(out: Path) -> str:
     return script.name
 
 
-def construct_yaml(plat: str, version: str, specs: list[str], wheels: list[Path], post_install: str) -> dict:
+def construct_yaml(
+    plat: str, version: str, specs: list[str], wheels: list[Path], post_install: str, material: dict | None
+) -> dict:
     extra_files = [{f"wheels/{w.name}": f"{WHEEL_DIR_IN_PREFIX}/{w.name}"} for w in wheels]
     extra_files.append({"requirements.txt": f"{WHEEL_DIR_IN_PREFIX}/requirements.txt"})
+    extra_files.append({"launcher.py": f"{SHARE_IN_PREFIX}/launcher.py"})
+    if material:
+        extra_files.append({"material.json": f"{SHARE_IN_PREFIX}/material.json"})
     cfg = {
         "name": NAME,
         "version": version,
@@ -149,6 +181,8 @@ def construct_yaml(plat: str, version: str, specs: list[str], wheels: list[Path]
             "default_prefix_all_users": f"%ALLUSERSPROFILE%\\{PREFIX_DIR}",
             "register_python_default": False,
         }
+        if material:
+            cfg["post_install_pages"] = ["material_pages.nsi"]
     else:
         cfg |= {
             "installer_type": "pkg",
@@ -182,13 +216,26 @@ def main() -> None:
     conda_urls, pypi = read_lock(args.platform)
     specs = [conda_spec(u) for u in conda_urls]
     wheels = download_wheels(pypi, out / "wheels")
-    post_install = write_post_install(out, args.platform, wheels)
+    material = material_from_env()
+    shutil.copy(LAUNCHER, out / "launcher.py")
+    if material:
+        (out / "material.json").write_text(json.dumps(material, indent=2))
+        if args.platform == "win-64":
+            (out / "material_pages.nsi").write_text(
+                render_template(INSTALLER_DIR / "windows_material_pages.nsi", material)
+            )
+    post_install = write_post_install(out, args.platform, wheels, material)
     if args.platform == "osx-arm64":
         write_pre_install_osx(out)
     (out / "construct.yaml").write_text(
-        yaml.safe_dump(construct_yaml(args.platform, args.version, specs, wheels, post_install), sort_keys=False)
+        yaml.safe_dump(
+            construct_yaml(args.platform, args.version, specs, wheels, post_install, material), sort_keys=False
+        )
     )
-    print(f"rendered {out / 'construct.yaml'}: {len(specs)} conda packages, {len(wheels)} wheels")
+    print(
+        f"rendered {out / 'construct.yaml'}: {len(specs)} conda packages, {len(wheels)} wheels, "
+        f"teaching material: {material['name'] if material else 'none'}"
+    )
 
     if not args.no_build:
         subprocess.run(

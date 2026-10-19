@@ -42,11 +42,24 @@ is needed during installation.
 Not sure which Mac you have? Apple menu → *About This Mac*. "Chip: Apple M…" means
 Apple Silicon. Macs with an Intel processor are not supported.
 
+## Teaching material and project backup (if offered)
+
+At the end of the installation you may be asked:
+
+1. **Download the teaching material?** Choose a folder (default: *Documents*). The
+   material is downloaded into a subfolder there, which needs an internet connection.
+2. **Do you already have the project backup (`.tar.gz`)?** If you downloaded it already,
+   choose the file. It is restored so the project is directly available in Activity
+   Browser and JupyterLab. This can take a few minutes for large projects.
+
+You can skip both and do them later.
+
 ## Using it
 
 - **JupyterLab** opens in your browser. Keep the terminal window that opens with it open
-  while you work, and close it to stop JupyterLab. Your notebooks are saved in the
-  `LCA-Notebooks` folder in your home directory.
+  while you work, and close it to stop JupyterLab. It opens in the teaching material
+  folder if you downloaded it, otherwise in the `LCA-Notebooks` folder in your home
+  directory.
 - **Activity Browser** and JupyterLab use the same Brightway projects, so a project you
   create in one shows up in the other.
 

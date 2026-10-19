@@ -1,0 +1,155 @@
+"""Helper shipped inside the installed environment (at share/lca-toolkit/launcher.py).
+
+Used by the JupyterLab shortcut and by the installers' optional post-install steps:
+
+    python launcher.py lab [jupyter args...]       start JupyterLab in the right folder
+    python launcher.py fetch-material --parent DIR  clone the teaching material into DIR/<name>
+    python launcher.py update-material              git pull the teaching material
+    python launcher.py restore-project FILE [--overwrite]
+                                                    restore a Brightway project backup (.tar.gz)
+
+Exit codes: 0 ok, 1 error, 3 project already exists (rerun with --overwrite).
+
+The teaching material is optional and configured at build time: share/lca-toolkit/material.json
+({"url": ..., "name": ..., "branch": ...}) only exists if the installer was built with
+MATERIAL_GIT_URL set. Where a user put the material is stored per user in config.json
+(see config_path()).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+PREFIX = Path(sys.prefix)
+SHARE = PREFIX / "share" / "lca-toolkit"
+MATERIAL_FILE = SHARE / "material.json"
+DEFAULT_NOTEBOOK_DIR = Path.home() / "LCA-Notebooks"
+EXIT_PROJECT_EXISTS = 3
+
+
+def config_path() -> Path:
+    if sys.platform == "win32":
+        base = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming"))
+    else:
+        base = Path.home() / "Library" / "Application Support"
+    return base / "lca-toolkit" / "config.json"
+
+
+def load_config() -> dict:
+    try:
+        return json.loads(config_path().read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def save_config(**values) -> None:
+    cfg = load_config() | values
+    path = config_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(cfg, indent=2))
+
+
+def material() -> dict | None:
+    try:
+        return json.loads(MATERIAL_FILE.read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def git_exe() -> str:
+    candidates = [PREFIX / "Library" / "bin" / "git.exe", PREFIX / "Library" / "cmd" / "git.exe", PREFIX / "bin" / "git"]
+    for c in candidates:
+        if c.is_file():
+            return str(c)
+    found = shutil.which("git")
+    if not found:
+        raise SystemExit("git not found in the environment")
+    return found
+
+
+def fetch_material(parent: Path) -> int:
+    info = material()
+    if info is None:
+        print("This installer was built without teaching material.", file=sys.stderr)
+        return 1
+    dest = parent.expanduser() / info["name"]
+    if (dest / ".git").is_dir():
+        print(f"Teaching material already present in {dest}")
+    elif dest.exists() and any(dest.iterdir()):
+        print(f"{dest} exists and is not empty; choose another folder.", file=sys.stderr)
+        return 1
+    else:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        cmd = [git_exe(), "clone"]
+        if info.get("branch"):
+            cmd += ["--branch", info["branch"]]
+        result = subprocess.run(cmd + [info["url"], str(dest)])
+        if result.returncode:
+            return result.returncode
+    save_config(material_dir=str(dest))
+    print(f"Teaching material in {dest}")
+    return 0
+
+
+def update_material() -> int:
+    target = load_config().get("material_dir")
+    if not target or not (Path(target) / ".git").is_dir():
+        print("No teaching material installed.", file=sys.stderr)
+        return 1
+    # --ff-only: never merge into (or overwrite) the user's own edits
+    return subprocess.run([git_exe(), "-C", target, "pull", "--ff-only"]).returncode
+
+
+def restore_project(archive: Path, overwrite: bool) -> int:
+    import bw2data as bd
+    from bw2io.backup import restore_project_directory
+
+    try:
+        name = restore_project_directory(archive, overwrite_existing=overwrite)
+    except ValueError as err:
+        if "already exists" in str(err):
+            print(err, file=sys.stderr)
+            return EXIT_PROJECT_EXISTS
+        raise
+    print(f"Restored Brightway project {name!r} into {bd.projects.dir.parent}")
+    return 0
+
+
+def lab(extra: list[str]) -> int:
+    target = load_config().get("material_dir")
+    notebook_dir = Path(target) if target and Path(target).is_dir() else DEFAULT_NOTEBOOK_DIR
+    notebook_dir.mkdir(parents=True, exist_ok=True)
+    return subprocess.run([sys.executable, "-m", "jupyterlab", f"--ServerApp.root_dir={notebook_dir}", *extra]).returncode
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    sub = parser.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("lab")
+    fetch = sub.add_parser("fetch-material")
+    fetch.add_argument("--parent", type=Path, required=True)
+    sub.add_parser("update-material")
+    restore = sub.add_parser("restore-project")
+    restore.add_argument("archive", type=Path)
+    restore.add_argument("--overwrite", action="store_true")
+    args, extra = parser.parse_known_args()
+
+    if args.cmd == "lab":
+        return lab(extra)
+    if extra:
+        parser.error(f"unrecognized arguments: {' '.join(extra)}")
+    if args.cmd == "fetch-material":
+        return fetch_material(args.parent)
+    if args.cmd == "update-material":
+        return update_material()
+    return restore_project(args.archive, args.overwrite)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

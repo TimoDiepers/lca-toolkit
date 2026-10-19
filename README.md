@@ -329,10 +329,13 @@ Triggers:
 - **tag `v*`**: build + test, then attach both installers to a GitHub release:
 
   ```bash
-  git tag v2026.1.0 && git push origin v2026.1.0
+  git tag v0.1.0 && git push origin v0.1.0
   ```
 
-  Bump `version` in `pixi.toml` first so the file names match.
+  Versions follow [semantic versioning](https://semver.org): bump `version` in `pixi.toml`
+  first (patch `0.1.1` for fixes/updated packages, minor `0.2.0` for new features or
+  dependencies, major for breaking changes such as a new Python or Brightway generation).
+  The build fails if the tag isn't `v` + that version, so file names and release always match.
 
 ---
 

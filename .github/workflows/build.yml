@@ -29,6 +29,16 @@ jobs:
           pixi-version: v0.51.0
           run-install: false
 
+      - name: Check tag matches pixi.toml version
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          version=$(sed -n 's/^version = "\([^"]*\)".*/\1/p' pixi.toml | head -1)
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pixi.toml version $version (expected v$version)"
+            exit 1
+          fi
+
       - name: Update Activity Browser to newest beta
         if: inputs.update-ab
         run: pixi update activity-browser

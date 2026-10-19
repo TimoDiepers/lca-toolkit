@@ -1,6 +1,6 @@
 [workspace]
 name = "lca-toolkit"
-version = "2026.1.0"  # installer version; bump for each release
+version = "0.1.0"  # installer version (semver); bump for each release, tag must be v<version>
 description = "Brightway 2.5 + Activity Browser 3 (beta) + JupyterLab, packaged as one-click installers"
 channels = ["conda-forge"]
 # osx-64 (Intel Mac) is not supported: conda-forge has no qt6-webengine build for it.

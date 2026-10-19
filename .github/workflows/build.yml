@@ -45,6 +45,17 @@ jobs:
         if: inputs.update-ab
         run: pixi update activity-browser
 
+      # Downloads only depend on the lock: conda packages (constructor's cache), the PyPI
+      # wheels and the build tooling environment.
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.conda/constructor
+            build/${{ matrix.platform }}/wheels
+            .pixi/envs/build
+          key: build-${{ matrix.platform }}-${{ hashFiles('pixi.lock') }}
+          restore-keys: build-${{ matrix.platform }}-
+
       - name: Build installer
         run: pixi run -e build installer
         env:
@@ -136,6 +147,7 @@ jobs:
       - name: Install for all users and smoke-test (Linux)
         if: runner.os == 'Linux'
         run: |
+          rm -rf ~/lca-toolkit  # the runner's disk is too small for two installations
           sudo bash build/linux-64/installer/*.sh -b -p /opt/lca-toolkit
           /opt/lca-toolkit/bin/python tests/smoke.py
           ls /usr/share/applications/ | grep -i "lca"

@@ -1,14 +1,16 @@
 # LCA Toolkit
 
-Everything you need for life cycle assessment (LCA) on your own computer, installed with one
-click: **Activity Browser** (point-and-click LCA) and **JupyterLab** (LCA in Python notebooks),
-both based on **Brightway**. No programming knowledge or terminal needed.
+Everything you need for [Brightway](https://docs.brightway.dev)-based life cycle assessment
+(LCA) on your own computer, installed with one click:
+[**Activity Browser**](https://github.com/LCA-ActivityBrowser/activity-browser)
+(point-and-click LCA) and **JupyterLab** (LCA in Python notebooks with Brightway). No
+programming knowledge needed, and on Windows and macOS no terminal either.
 
 After installing you get two programs:
 
 | | | |
 |---|---|---|
-| <img src="recipe/shortcuts/icons/lca-browser.svg" width="48" alt=""> | **LCA Browser** | Activity Browser: build and calculate LCA models with menus and tables |
+| <img src="recipe/shortcuts/icons/lca-browser.svg" width="48" alt=""> | **LCA Browser** | [Activity Browser](https://github.com/LCA-ActivityBrowser/activity-browser), the graphical interface for Brightway: import databases, model products and processes, calculate impacts and analyse the results |
 | <img src="recipe/shortcuts/icons/lca-notebooks.svg" width="48" alt=""> | **LCA Notebooks** | JupyterLab: work through notebooks (e.g. the course material) with Brightway |
 
 ## Download
@@ -21,14 +23,17 @@ After installing you get two programs:
 |---|---|
 | **Windows** 10 or 11 (64-bit) | [**LCA-Toolkit-Windows-x86_64.exe**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Windows-x86_64.exe) (about 0.8 GB) |
 | **Mac with Apple Silicon** (M1, M2, M3, M4, …), macOS 13 or newer | [**LCA-Toolkit-macOS-arm64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-arm64.pkg) (about 0.5 GB) |
+| **Mac with Intel processor**, macOS 13 or newer | [**LCA-Toolkit-macOS-x86_64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-x86_64.pkg) (about 0.8 GB) |
+| **Linux** (64-bit, e.g. Ubuntu 22.04 or newer) | [**LCA-Toolkit-Linux-x86_64.sh**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Linux-x86_64.sh) (about 0.8 GB) |
 
 Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releases).
 
-- You need about **3 GB** of free disk space.
+- You need about **3 GB** of free disk space (Linux: about **5.5 GB**).
 - The installation itself works offline. Downloading the optional teaching material needs
   internet.
-- **Not supported:** Macs with an Intel processor, Linux. Not sure which Mac you have?
-  Apple menu → *About This Mac*: "Chip: Apple M…" means Apple Silicon.
+- **Which Mac do I have?** Apple menu → *About This Mac*: "Chip: Apple M…" means Apple
+  Silicon, "Processor: … Intel …" means Intel.
+- **Not supported:** Windows on ARM, Linux on ARM, macOS 12 or older.
 
 ## Installing on Windows
 
@@ -65,6 +70,25 @@ Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releas
    - "Install for all users": the apps are in the normal *Applications* folder.
    - Tip: while an app runs, right-click its Dock icon → Options → **Keep in Dock**.
 
+## Installing on Linux
+
+The Linux installer is a script you run in a terminal (no admin rights needed):
+
+```bash
+cd ~/Downloads
+bash LCA-Toolkit-Linux-x86_64.sh
+```
+
+1. Press Enter to accept the install location (`~/lca-toolkit`), or type another one.
+2. If it offers the **teaching material** and the **project backup**, answer the questions
+   in the terminal (see [below](#teaching-material-and-project-backup)). For the backup,
+   type or paste the path of the `.tar.gz` file.
+3. Start **LCA Browser** or **LCA Notebooks** from your desktop's application menu
+   (category *Science* / *Education*). They can take a few seconds to appear in the menu.
+
+For all users: `sudo bash LCA-Toolkit-Linux-x86_64.sh` and choose e.g.
+`/opt/lca-toolkit`. The menu entries then appear for everyone.
+
 ## Teaching material and project backup
 
 If your course's installer includes them, you're asked at the end of the installation:
@@ -99,6 +123,8 @@ LCA Browser and LCA Notebooks first.
 ## Uninstalling
 
 - **Windows:** Settings → Apps → Installed apps → "LCA-Toolkit" → ⋯ → Uninstall.
+- **Linux:** `rm -rf ~/lca-toolkit ~/.local/share/applications/*lca-toolkit*` (all-users
+  install: `sudo rm -rf /opt/lca-toolkit /usr/share/applications/*lca-toolkit*`).
 - **macOS:** move the two apps **LCA Browser** and **LCA Notebooks** to the Trash (in
   *Applications* in your home folder, or the main *Applications* folder). Then, in Finder,
   press ⇧⌘G, go to `~/Library/lca-toolkit` ("for me only") or `/Library/lca-toolkit` ("for
@@ -107,12 +133,12 @@ LCA Browser and LCA Notebooks first.
 This keeps your notebooks, the teaching material and your Brightway projects. To remove
 those too, delete:
 
-| What | Windows | macOS |
-|---|---|---|
-| Teaching material | the folder you chose (default `Documents\<material>`) | the folder you chose (default `~/Documents/<material>`) |
-| Default notebook folder | `%USERPROFILE%\LCA-Notebooks` | `~/LCA-Notebooks` |
-| Brightway projects ⚠️ shared with any other Brightway installation | `%LOCALAPPDATA%\pylca\Brightway3` | `~/Library/Application Support/Brightway3` |
-| Settings | `%APPDATA%\lca-toolkit` | `~/Library/Application Support/lca-toolkit` |
+| What | Windows | macOS | Linux |
+|---|---|---|---|
+| Teaching material | the folder you chose (default `Documents\<material>`) | the folder you chose (default `~/Documents/<material>`) | the folder you chose (default `~/Documents/<material>`) |
+| Default notebook folder | `%USERPROFILE%\LCA-Notebooks` | `~/LCA-Notebooks` | `~/LCA-Notebooks` |
+| Brightway projects ⚠️ shared with any other Brightway installation | `%LOCALAPPDATA%\pylca\Brightway3` | `~/Library/Application Support/Brightway3` | `~/.local/share/Brightway3` |
+| Settings | `%APPDATA%\lca-toolkit` | `~/Library/Application Support/lca-toolkit` | `~/.config/lca-toolkit` |
 
 ## Troubleshooting
 
@@ -121,6 +147,8 @@ those too, delete:
 - **Windows: "Directory … is not empty".** The folder contains something that isn't an LCA
   Toolkit installation. Choose another folder.
 - **Windows: the installer refuses a path with spaces.** Choose e.g. `C:\lca-toolkit`.
+- **Linux: "File or directory already exists".** The folder contains something that isn't
+  an LCA Toolkit installation. Choose another location.
 - **LCA Notebooks closed / the browser tab says the server is gone.** You closed the
   terminal window. Start LCA Notebooks again.
 - **Teaching material download failed during installation.** Check your internet
@@ -139,28 +167,37 @@ Everything below is about building and changing the installers.
 - Optionally, the installer also downloads teaching material and restores a Brightway
   project backup (see *Optional teaching material*).
 
-| Platform | Installer file | Fast sparse solver |
-|---|---|---|
-| Windows x64 | `LCA-Toolkit-<version>-Windows-x86_64.exe` | pypardiso (Intel MKL) |
-| macOS Apple Silicon (M1+) | `LCA-Toolkit-<version>-macOS-arm64.pkg` | scikit-umfpack (SuiteSparse) |
+| Platform (pixi name) | Installer file | Fast sparse solver | Qt / PySide6 from |
+|---|---|---|---|
+| Windows x64 (`win-64`) | `LCA-Toolkit-<version>-Windows-x86_64.exe` | pypardiso (Intel MKL) | conda-forge |
+| macOS Apple Silicon (`osx-arm64`) | `LCA-Toolkit-<version>-macOS-arm64.pkg` | scikit-umfpack (SuiteSparse) | conda-forge |
+| macOS Intel (`osx-64`) | `LCA-Toolkit-<version>-macOS-x86_64.pkg` | scikit-umfpack (SuiteSparse) | **PyPI** |
+| Linux x64 (`linux-64`) | `LCA-Toolkit-<version>-Linux-x86_64.sh` | pypardiso (Intel MKL) | conda-forge |
 
-Intel Macs are not supported: conda-forge has no `qt6-webengine` build for `osx-64`, and
-Activity Browser needs it.
+Activity Browser needs Qt WebEngine. conda-forge has no `qt6-webengine` for `osx-64`, so on
+Intel Macs PySide6 comes from PyPI: its universal2 wheels bundle their own Qt including
+WebEngine (macOS 13+). That's also why `matplotlib-base` is used instead of `matplotlib`,
+which would pull in a second Qt from conda-forge.
 
 ## What gets installed where
 
-Both installers let the user choose **"Just me"** (no admin rights needed, the default) or
-**"All users"** (admin password required):
+The Windows and macOS installers let the user choose **"Just me"** (no admin rights
+needed, the default) or **"All users"** (admin password required). On Linux, running the
+installer with `sudo` and an install location such as `/opt/lca-toolkit` does the same:
 
-| | Windows: just me | Windows: all users | macOS: just me | macOS: all users |
-|---|---|---|---|---|
-| Software (environment) | `%USERPROFILE%\lca-toolkit` | `%ALLUSERSPROFILE%\lca-toolkit` (usually `C:\ProgramData\lca-toolkit`) | `~/Library/lca-toolkit` | `/Library/lca-toolkit` |
-| Shortcuts | Start Menu → *LCA Toolkit*, plus desktop | Start Menu (all users) | `~/Applications` | `/Applications` |
+| | Software (environment) | Shortcuts |
+|---|---|---|
+| Windows, just me | `%USERPROFILE%\lca-toolkit` | Start Menu → *LCA Toolkit*, plus desktop |
+| Windows, all users | `%ALLUSERSPROFILE%\lca-toolkit` (usually `C:\ProgramData\lca-toolkit`) | Start Menu (all users) |
+| macOS, just me | `~/Library/lca-toolkit` | `~/Applications` |
+| macOS, all users | `/Library/lca-toolkit` | `/Applications` |
+| Linux, just me | `~/lca-toolkit` (asked during install) | `~/.local/share/applications` (application menu) |
+| Linux, all users (`sudo`) | e.g. `/opt/lca-toolkit` | `/usr/share/applications` |
 
 For every user:
 - JupyterLab opens in the teaching material folder if the user downloaded it (see *Optional teaching material*). Otherwise it opens in `LCA-Notebooks` in the home folder (`%USERPROFILE%\LCA-Notebooks` or `~/LCA-Notebooks`).
 - Brightway projects are kept in Brightway's default data directory, which Activity Browser and JupyterLab share.
-- JupyterLab only offers the toolkit's own Python kernel and starts it without asking. Kernels from other Python setups (in `~/Library/Jupyter`, `%APPDATA%\jupyter`) are hidden there, because they lack the toolkit's packages.
+- JupyterLab only offers the toolkit's own Python kernel and starts it without asking. Kernels from other Python setups (in `~/Library/Jupyter`, `~/.local/share/jupyter`, `%APPDATA%\jupyter`) are hidden there, because they lack the toolkit's packages.
 - On macOS, the environment folder belongs to the installing user even for "all users", so that user can still `pip install` extra packages.
 
 The installer does not touch `PATH`, shell init files or the registry's "default Python",
@@ -180,12 +217,12 @@ so it can't interfere with other Python/conda installations.
 | `tools/make_icons.py` | Renders the SVGs to `.icns` / `.ico` | you change icon sizes or margins |
 | `launcher/launcher.py` | Shipped into the env: starts JupyterLab in the right folder with only the toolkit kernel; fetches/updates teaching material; restores project backups | you change what the LCA Notebooks shortcut or the material steps do |
 | `launcher/jupyterlab_overrides.json` | Shipped as JupyterLab's `overrides.json`: default settings (auto-start the kernel) | you want other JupyterLab defaults |
-| `installer/windows_material_pages.nsi`, `installer/macos_material_dialogs.sh` | Optional installer steps for teaching material + project restore | you change those dialogs |
+| `installer/windows_material_pages.nsi`, `installer/macos_material_dialogs.sh`, `installer/linux_material_prompts.sh` | Optional installer steps for teaching material + project restore | you change those dialogs |
 | `tools/run_constructor.py`, `installer/macos_checks_before_install.sh` | constructor with our patches: replace an existing installation instead of refusing (see *Updating installations*) | you change the update behaviour, or constructor changes the patched code |
 | `tests/test_launcher.py` | Tests the launcher's material + restore steps in an installed env | — |
 | `recipe/shortcuts/recipe.yaml` | rattler-build recipe for the tiny `lca-toolkit-shortcuts` conda package that carries `menu.json` and the icons | you rename the shortcut package; bump its version whenever `menu.json` or an icon changes |
 | `tests/smoke.py` | Checks an *installed* environment: solver active, Qt WebEngine, AB, JupyterLab, AB starts headless | you add packages that should be verified |
-| `.github/workflows/build.yml` | CI: builds both installers, installs them on fresh runners, runs the tests, publishes releases | you change platforms or release flow |
+| `.github/workflows/build.yml` | CI: builds all four installers, installs them on fresh runners, runs the tests, publishes releases | you change platforms or release flow |
 | `build/` (git-ignored) | Build outputs: rendered `construct.yaml`, downloaded wheels, final installers | — |
 | `.superpowers/` (git-ignored) | Scratch files from design sessions (icon mockups) | — |
 
@@ -237,7 +274,7 @@ The finished installer needs **no internet** during installation.
   but those builds pull `bw_graph_tools 0.5` / `bw_functional` with `numpy<2` and, for the
   newest beta, an unsolvable `bw2io → pyecospold → lxml==4.9.3` chain. The PyPI wheels of
   the same AB version have none of these problems, so AB and Brightway come from PyPI.
-- **Not uv/PyPI-only:** `scikit-umfpack` (the fast solver on Apple Silicon) has no wheels
+- **Not uv/PyPI-only:** `scikit-umfpack` (the fast solver on macOS) has no wheels
   on PyPI, only an sdist that needs SuiteSparse and a compiler. conda-forge has prebuilt
   binaries, as well as Qt/WebEngine and MKL.
 
@@ -255,12 +292,12 @@ All dependency changes happen in **`pixi.toml`**, followed by re-locking.
 | Kind of package | Section in `pixi.toml` | Example |
 |---|---|---|
 | Compiled / non-Python libraries, anything on conda-forge that is heavy or binary | `[dependencies]` | `pandas = "*"`, `geopandas = ">=1"` |
-| Only on one platform | `[target.win-64.dependencies]` / `[target.osx-arm64.dependencies]` | `pypardiso`, `scikit-umfpack` |
+| Only on some platforms | `[target.<platform>.dependencies]` (`win-64`, `osx-arm64`, `osx-64`, `linux-64`) | `pypardiso`, `scikit-umfpack`, `pyside6` |
 | Pure-Python packages, or packages only on PyPI | `[pypi-dependencies]` | `bw_temporalis = "*"`, `premise = ">=2.2"` |
 
 Rules of thumb:
 - Prefer conda-forge for anything with compiled code. Every PyPI package must have a
-  **wheel** for both platforms; `make_installer.py` refuses sdists, because users can't
+  **wheel** for every platform; `make_installer.py` refuses sdists, because users can't
   compile.
 - Don't list the same package in both sections. pixi uses the conda version and treats
   it as satisfying the PyPI requirement.
@@ -280,7 +317,7 @@ pixi run python -c "import bw_temporalis"
 
 # 4. (optional) build + test the installer for your own OS, see below
 
-# 5. commit pixi.toml AND pixi.lock, push / open a PR → CI builds and tests both platforms
+# 5. commit pixi.toml AND pixi.lock, push / open a PR → CI builds and tests all platforms
 ```
 
 ### Updating versions
@@ -302,10 +339,12 @@ Edit `python = "3.13.*"` in `pixi.toml` and re-lock. Check that `scikit-umfpack`
 
 ### Adding a platform
 
-Add it to `platforms` in `pixi.toml`, add a branch in `current_platform()` and
-`construct_yaml()` in `tools/make_installer.py`, and add a job to the CI matrix.
-Linux would need `installer_type: sh`. Intel macOS is blocked by `qt6-webengine` (see
-above).
+Add it to `platforms` in `pixi.toml` (with its solver and Qt under `[target.<platform>…]`),
+add it to `PLATFORMS`, `current_platform()` and `construct_yaml()` in
+`tools/make_installer.py`, give `menu.json` a `platforms` block if needed, and add a job to
+the CI matrix and copies to the release job. Activity Browser needs Qt WebEngine; check
+conda-forge (`pixi search -p <platform> qt6-webengine`) or fall back to PySide6 wheels from
+PyPI like `osx-64`.
 
 ---
 
@@ -346,8 +385,11 @@ Where this is implemented:
   git and bw2io run as the logged-in user in their own session (`launchctl asuser` +
   `sudo -u`); a root `osascript` there fails silently. Dialog errors end up in
   `/var/log/install.log` (search for `postinstall`).
-- Silent/unattended installs skip both steps (Windows `/S`; on macOS any command-line
-  `installer -pkg …`, which constructor reports as `INSTALLER_UNATTENDED=1`).
+- **Linux:** the `.sh` installer runs in a terminal, so `installer/linux_material_prompts.sh`
+  (appended to the post-install script) asks there, reading from `/dev/tty`. With `sudo`,
+  git and bw2io run as the user who called sudo.
+- Silent/unattended installs skip both steps (Windows `/S`; Linux `-b`; on macOS any
+  command-line `installer -pkg …`, which constructor reports as `INSTALLER_UNATTENDED=1`).
 - git runs with credential helpers and prompts switched off. The token is in the URL, and
   Windows' git would otherwise open a credential-helper window, which hangs unattended
   installs.
@@ -371,9 +413,10 @@ Where this is implemented:
 ## Updating installations
 
 constructor refuses to install into a folder that already exists (macOS: "Chosen path
-already exists!", Windows: "Directory … is not empty"). To let users update by simply
-running the new installer, `tools/make_installer.py` runs constructor through
-`tools/run_constructor.py`, which patches both installers:
+already exists!", Windows: "Directory … is not empty", Linux: "File or directory already
+exists"). To let users update by simply running the new installer,
+`tools/make_installer.py` runs constructor through `tools/run_constructor.py`, which
+patches all three installer types:
 
 - **Windows:** a patched copy of constructor's NSIS template (`nsis_template`). On the
   directory page, if the folder contains `Uninstall-LCA-Toolkit.exe` and
@@ -383,8 +426,12 @@ running the new installer, `tools/make_installer.py` runs constructor through
   for `installer/macos_checks_before_install.sh`. If the folder contains
   `conda-meta/history` and `_conda`, it asks "Replace?" in a dialog and then deletes the
   folder. The old apps are removed by the `pre_install` step anyway (see *Shortcuts*).
+- **Linux:** constructor's `header.sh` (the start of the `.sh` installer) gets the same
+  check: if the folder holds `conda-meta/history` and `_conda`, it asks "Replace?
+  [yes|no]" in the terminal and deletes the folder. constructor's own `-u` (update into
+  the existing folder) still works as before.
 - Anything else in the way is still refused. Silent/command-line installs (Windows `/S`,
-  `installer -pkg …`) replace without asking. CI tests this by installing twice.
+  `installer -pkg …`, Linux `-b`) replace without asking. CI tests this by installing twice.
 - Only the software folder is replaced. Notebooks, teaching material, Brightway projects
   and settings live elsewhere and are kept.
 - If constructor changes the patched code, `run_constructor.py` fails the build with an
@@ -486,7 +533,7 @@ MATERIAL_GIT_URL="https://user:token@host/repo.git" pixi run -e build installer
 macOS (no admin rights needed):
 
 ```bash
-installer -pkg build/osx-arm64/installer/*.pkg -target CurrentUserHomeDirectory
+installer -pkg build/osx-*/installer/*.pkg -target CurrentUserHomeDirectory
 ~/Library/lca-toolkit/bin/python tests/smoke.py --launch
 ~/Library/lca-toolkit/bin/python tests/test_launcher.py   # material + project restore
 # clean up:
@@ -502,14 +549,23 @@ Start-Process .\build\win-64\installer\LCA-Toolkit-*.exe -Wait -ArgumentList '/S
 & "$env:USERPROFILE\lca-toolkit\python.exe" tests\test_launcher.py
 ```
 
-These silent/command-line installs skip the teaching-material dialogs. To try those,
-double-click the installer instead.
+Linux:
+
+```bash
+bash build/linux-64/installer/*.sh -b -p ~/lca-toolkit     # -b: batch mode, no questions
+~/lca-toolkit/bin/python tests/smoke.py --launch
+~/lca-toolkit/bin/python tests/test_launcher.py
+```
+
+These silent/command-line installs skip the teaching-material questions. To try those,
+double-click the installer instead (Linux: run it without `-b`).
 
 ---
 
 ## CI and releases
 
-`.github/workflows/build.yml` runs on `macos-14` (Apple Silicon) and `windows-latest`:
+`.github/workflows/build.yml` runs one job per platform: `macos-14` (Apple Silicon),
+`macos-15-intel` (Intel Mac), `windows-latest` and `ubuntu-latest`. Each job:
 
 1. builds the installer (`pixi run -e build installer`), with the teaching material if the
    `MATERIAL_GIT_URL` secret is set (and the optional `MATERIAL_NAME` / `MATERIAL_BRANCH`
@@ -528,9 +584,10 @@ Triggers (a plain push to `main` does **not** build):
 - **pull requests**: build + test with the committed `pixi.lock`;
 - **manual run** (Actions → *Build installers* → *Run workflow*): updates Activity Browser
   to the newest beta first (checkbox, on by default). The lock used is in the artifact;
-- **tag `v*`**: build + test with the committed `pixi.lock`, then publish both installers
-  as a GitHub release, plus copies without the version in the file name
-  (`LCA-Toolkit-Windows-x86_64.exe`, `LCA-Toolkit-macOS-arm64.pkg`). The download links at
+- **tag `v*`**: build + test with the committed `pixi.lock`, then publish all four
+  installers as a GitHub release, plus copies without the version in the file name
+  (`LCA-Toolkit-Windows-x86_64.exe`, `LCA-Toolkit-macOS-arm64.pkg`,
+  `LCA-Toolkit-macOS-x86_64.pkg`, `LCA-Toolkit-Linux-x86_64.sh`). The download links at
   the top of this README point to those via `releases/latest/download/…`. See *Making a
   release* below.
 
@@ -557,13 +614,13 @@ git commit -am "Release 0.2.0: newest AB beta"
 git push
 gh workflow run build.yml -f update-ab=false    # or: Actions → Run workflow, untick the box
 
-# 5. tag → CI builds + tests both platforms again and publishes the release
+# 5. tag → CI builds + tests all platforms again and publishes the release
 git tag v0.2.0
 git push origin v0.2.0
 ```
 
 After ~15 min the release appears under *Releases* with
-`LCA-Toolkit-<version>-Windows-x86_64.exe` and `LCA-Toolkit-<version>-macOS-arm64.pkg`.
+the four `LCA-Toolkit-<version>-…` installers (plus the copies without version).
 If any build or install test fails, nothing is published. Fix the problem, then move the
 tag to the fixed commit (`git tag -f v0.2.0 && git push -f origin v0.2.0`) or use the
 next patch version.
@@ -600,4 +657,4 @@ Things to keep in mind:
   user name contains one, choose e.g. `C:\lca-toolkit` in the installer.
 - **ecoinvent** can't be bundled (license). Users import it in Activity Browser with
   their own ecoinvent account.
-- **Size:** the installer is about 0.5 GB (macOS) or 0.8 GB (Windows, MKL), and the installed environment is about 2 GB.
+- **Size:** the installers are about 0.5 GB (Apple Silicon), 0.8 GB (Intel Mac, Windows) and 0.8 GB (Linux). Installed, the environment takes about 2–3 GB; the Linux installer wants about 5.5 GB free while installing (Intel MKL is large there).

@@ -12,7 +12,7 @@ is needed during installation.
 3. Click through the installer. "Just Me" (default) needs no admin rights, and
    "All Users" needs an admin password.
    If your user name contains a space, change the install folder to `C:\lca-toolkit`.
-4. Start **Activity Browser (LCA Toolkit)** or **JupyterLab (LCA Toolkit)** from the
+4. Start **LCA Browser** (Activity Browser) or **LCA Notebooks** (JupyterLab) from the
    Start Menu or the desktop.
 
 ## macOS (Apple Silicon: M1 or newer)
@@ -30,8 +30,8 @@ is needed during installation.
      appear in the normal *Applications* folder).
 
    Then finish the installer.
-5. Start **Activity Browser (LCA Toolkit)** or **JupyterLab (LCA Toolkit)**. The easiest
-   way is Spotlight: press ⌘ Space, type "Activity Browser" or "JupyterLab", and press Enter.
+5. Start **LCA Browser** (Activity Browser) or **LCA Notebooks** (JupyterLab). The easiest
+   way is Spotlight: press ⌘ Space, type "LCA", and pick one with the arrow keys and Enter.
    - "Install for me only": the apps are in the *Applications* folder **inside your home
      folder** (Finder → Go → Home, or ⇧⌘H → Applications), not the main Applications
      folder.
@@ -66,7 +66,7 @@ You can skip both and do them later.
 ## Uninstalling
 
 - Windows: Settings → Apps → "LCA-Toolkit" → Uninstall.
-- macOS: delete the two "(LCA Toolkit)" apps and the software folder. In Finder, press
+- macOS: delete the two apps "LCA Browser" and "LCA Notebooks" and the software folder. In Finder, press
   ⇧⌘G and go to `~/Library/lca-toolkit` ("for me only") or `/Library/lca-toolkit` ("for all
   users"), then move that folder to the Trash.
 

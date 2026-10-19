@@ -4,8 +4,9 @@
   "menu_name": "LCA Toolkit",
   "menu_items": [
     {
-      "name": "Activity Browser (LCA Toolkit)",
+      "name": "LCA Browser",
       "description": "Activity Browser 3 (beta) for Brightway 2.5",
+      "icon": "{{ MENU_DIR }}/lca-browser.{{ ICON_EXT }}",
       "command": [
         "{{ PREFIX }}/bin/activity-browser"
       ],
@@ -25,14 +26,15 @@
             "-c",
             "eval \"$('{{ PREFIX }}/_conda' shell.bash activate '{{ PREFIX }}')\" && exec activity-browser"
           ],
-          "CFBundleName": "Activity Browser LCA Toolkit",
+          "CFBundleName": "LCA Browser",
           "CFBundleIdentifier": "io.github.lca-toolkit.activity-browser"
         }
       }
     },
     {
-      "name": "JupyterLab (LCA Toolkit)",
+      "name": "LCA Notebooks",
       "description": "JupyterLab with Brightway 2.5; opens in the teaching material folder, or LCA-Notebooks in your home folder",
+      "icon": "{{ MENU_DIR }}/lca-notebooks.{{ ICON_EXT }}",
       "command": [
         "{{ PYTHON }}",
         "{{ PREFIX }}/share/lca-toolkit/launcher.py",
@@ -56,7 +58,7 @@
             "-c",
             "eval \"$('{{ PREFIX }}/_conda' shell.bash activate '{{ PREFIX }}')\" && exec python '{{ PREFIX }}/share/lca-toolkit/launcher.py' lab"
           ],
-          "CFBundleName": "JupyterLab LCA Toolkit",
+          "CFBundleName": "LCA Notebooks",
           "CFBundleIdentifier": "io.github.lca-toolkit.jupyterlab"
         }
       }

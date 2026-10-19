@@ -57,15 +57,16 @@ jobs:
           installer -pkg build/osx-arm64/installer/*.pkg -target CurrentUserHomeDirectory
           ~/Library/lca-toolkit/bin/python tests/smoke.py --launch
           ~/Library/lca-toolkit/bin/python tests/test_launcher.py
-          ls ~/Applications/"Activity Browser (LCA Toolkit).app" ~/Applications/"JupyterLab (LCA Toolkit).app"
+          ls ~/Applications/"LCA Browser.app" ~/Applications/"LCA Notebooks.app"
+          ls ~/Applications/"LCA Browser.app"/Contents/Resources/*.icns
 
       - name: Install for all users and smoke-test (macOS)
         if: runner.os == 'macOS'
         run: |
           sudo installer -pkg build/osx-arm64/installer/*.pkg -target /
           /Library/lca-toolkit/bin/python tests/smoke.py
-          ls /Applications/"Activity Browser (LCA Toolkit).app" /Applications/"JupyterLab (LCA Toolkit).app"
-          grep -o "'/Library/lca-toolkit/_conda'" /Applications/"Activity Browser (LCA Toolkit).app"/Contents/MacOS/*-script
+          ls /Applications/"LCA Browser.app" /Applications/"LCA Notebooks.app"
+          grep -o "'/Library/lca-toolkit/_conda'" /Applications/"LCA Browser.app"/Contents/MacOS/*-script
 
       - name: Install and smoke-test (Windows)
         if: runner.os == 'Windows'
@@ -77,7 +78,7 @@ jobs:
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           & "$env:USERPROFILE\lca-toolkit\python.exe" tests/test_launcher.py
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
-          Get-ChildItem -Recurse "$env:APPDATA\Microsoft\Windows\Start Menu\Programs" -Filter "*LCA Toolkit*.lnk" | Tee-Object -Variable lnks
+          Get-ChildItem -Recurse "$env:APPDATA\Microsoft\Windows\Start Menu\Programs" -Filter "LCA *.lnk" | Tee-Object -Variable lnks
           if (-not $lnks) { throw "Start Menu shortcuts missing" }
 
       - name: Install for all users and smoke-test (Windows)
@@ -88,7 +89,7 @@ jobs:
           Start-Process $exe -Wait -ArgumentList '/S', '/InstallationType=AllUsers', '/RegisterPython=0', '/AddToPath=0', "/D=$env:ProgramData\lca-toolkit"
           & "$env:ProgramData\lca-toolkit\python.exe" tests/smoke.py
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
-          Get-ChildItem -Recurse "$env:ProgramData\Microsoft\Windows\Start Menu\Programs" -Filter "*LCA Toolkit*.lnk" | Tee-Object -Variable lnks
+          Get-ChildItem -Recurse "$env:ProgramData\Microsoft\Windows\Start Menu\Programs" -Filter "LCA *.lnk" | Tee-Object -Variable lnks
           if (-not $lnks) { throw "All-users Start Menu shortcuts missing" }
 
       - uses: actions/upload-artifact@v4

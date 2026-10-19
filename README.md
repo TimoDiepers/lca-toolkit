@@ -265,8 +265,24 @@ Each entry in `menu_items` becomes one shortcut. `command` is what runs, and the
 - JupyterLab uses `"terminal": true`. The terminal window shows the server log, and
   closing it stops JupyterLab.
 
+The two shortcuts are **LCA Browser** (Activity Browser) and **LCA Notebooks**
+(JupyterLab). The names start with "LCA" so that the part that matters survives when a
+desktop or Launchpad cuts long names short.
+
+**Icons** live in `recipe/shortcuts/icons/`: one SVG per shortcut is the source, the
+`.icns` (macOS) and `.ico` (Windows) next to it are generated from it and committed:
+
+```bash
+pixi run -e build icons     # after editing an SVG; then commit the .icns/.ico too
+```
+
+`tools/make_icons.py` drops the element with `id="label"` (the "LCA" lettering) at sizes
+below 48 px, and adds Apple's usual margin to the macOS version. The lettering is stored as
+outlines, not text, so it renders the same without any fonts installed. `menu.json` points at
+the icons with `{{ MENU_DIR }}/<name>.{{ ICON_EXT }}`.
+
 To add a shortcut (e.g. a second notebook folder, or a plain Python prompt), copy an entry,
-change `name`, `command` and the macOS `CFBundleName`/`CFBundleIdentifier`. Then rebuild.
+change `name`, `icon`, `command` and the macOS `CFBundleName`/`CFBundleIdentifier`. Then rebuild.
 Bump `context.version` in `recipe/shortcuts/recipe.yaml` when you change `menu.json`.
 
 ---
@@ -298,7 +314,7 @@ macOS (no admin rights needed):
 installer -pkg build/osx-arm64/installer/*.pkg -target CurrentUserHomeDirectory
 ~/Library/lca-toolkit/bin/python tests/smoke.py --launch
 # clean up:
-rm -rf ~/Library/lca-toolkit ~/Applications/"Activity Browser (LCA Toolkit).app" ~/Applications/"JupyterLab (LCA Toolkit).app"
+rm -rf ~/Library/lca-toolkit ~/Applications/"LCA Browser.app" ~/Applications/"LCA Notebooks.app"
 # all-users variant: sudo installer -pkg … -target /   → /Library/lca-toolkit, /Applications
 ```
 
@@ -398,5 +414,3 @@ Things to keep in mind:
 - **ecoinvent** can't be bundled (license). Users import it in Activity Browser with
   their own ecoinvent account.
 - **Size:** the installer is about 0.5 GB (macOS) or 0.8 GB (Windows, MKL), and the installed environment is about 2 GB.
-- **No custom icons** yet (menuinst default icons). Add `"icon"` entries to `menu.json`
-  (`.ico` for Windows, `.icns` for macOS) to change that.

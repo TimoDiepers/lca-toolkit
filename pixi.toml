@@ -45,10 +45,13 @@ constructor = ">=3.17"
 conda-standalone = "*"
 rattler-build = "*"
 pyyaml = "*"
+cairosvg = "*"  # tools/make_icons.py
+pillow = "*"
 
 [feature.build.tasks]
 build-shortcuts = "rattler-build build --recipe recipe/shortcuts --output-dir build/channel"
 installer = { cmd = "python tools/make_installer.py", depends-on = ["build-shortcuts"] }
+icons = "python tools/make_icons.py"  # after editing recipe/shortcuts/icons/*.svg; commit the output
 
 [environments]
 build = { features = ["build"], no-default-feature = true }

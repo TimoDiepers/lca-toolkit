@@ -34,12 +34,18 @@ jobs:
 
       - name: Build installer
         run: pixi run -e build installer
+        env:
+          # Optional: git URL of teaching material to offer during installation (see README).
+          MATERIAL_GIT_URL: ${{ secrets.MATERIAL_GIT_URL }}
+          MATERIAL_NAME: ${{ vars.MATERIAL_NAME }}
+          MATERIAL_BRANCH: ${{ vars.MATERIAL_BRANCH }}
 
       - name: Install and smoke-test (macOS)
         if: runner.os == 'macOS'
         run: |
           installer -pkg build/osx-arm64/installer/*.pkg -target CurrentUserHomeDirectory
           ~/Library/lca-toolkit/bin/python tests/smoke.py --launch
+          ~/Library/lca-toolkit/bin/python tests/test_launcher.py
           ls ~/Applications/"Activity Browser (LCA Toolkit).app" ~/Applications/"JupyterLab (LCA Toolkit).app"
 
       - name: Install for all users and smoke-test (macOS)
@@ -57,6 +63,8 @@ jobs:
           $exe = (Get-ChildItem build/win-64/installer/*.exe).FullName
           Start-Process $exe -Wait -ArgumentList '/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', "/D=$env:USERPROFILE\lca-toolkit"
           & "$env:USERPROFILE\lca-toolkit\python.exe" tests/smoke.py --launch
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          & "$env:USERPROFILE\lca-toolkit\python.exe" tests/test_launcher.py
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           Get-ChildItem -Recurse "$env:APPDATA\Microsoft\Windows\Start Menu\Programs" -Filter "*LCA Toolkit*.lnk" | Tee-Object -Variable lnks
           if (-not $lnks) { throw "Start Menu shortcuts missing" }

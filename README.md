@@ -33,7 +33,6 @@ Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releas
   internet.
 - **Which Mac do I have?** Apple menu → *About This Mac*: "Chip: Apple M…" means Apple
   Silicon, "Processor: … Intel …" means Intel.
-- **Not supported:** Windows on ARM, Linux on ARM, macOS 12 or older.
 
 ## Installing on Windows
 

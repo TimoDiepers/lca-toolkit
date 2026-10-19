@@ -131,7 +131,13 @@ def lab(extra: list[str]) -> int:
     target = load_config().get("material_dir")
     notebook_dir = Path(target) if target and Path(target).is_dir() else DEFAULT_NOTEBOOK_DIR
     notebook_dir.mkdir(parents=True, exist_ok=True)
-    return subprocess.run([sys.executable, "-m", "jupyterlab", f"--ServerApp.root_dir={notebook_dir}", *extra]).returncode
+    args = [
+        f"--ServerApp.root_dir={notebook_dir}",
+        # only this environment's kernel: hides kernels from other Python setups in
+        # ~/Library/Jupyter or %APPDATA%\jupyter, which lack the toolkit's packages
+        "--KernelSpecManager.allowed_kernelspecs=python3",
+    ]
+    return subprocess.run([sys.executable, "-m", "jupyterlab", *args, *extra]).returncode
 
 
 def main() -> int:

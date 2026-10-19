@@ -9,10 +9,14 @@ set +e
 [[ "${INSTALLER_UNATTENDED:-0}" == "1" ]] && exit 0
 
 user=$(stat -f%Su /dev/console)
+uid=$(id -u "$user")
 home=$(dscl . -read "/Users/$user" NFSHomeDirectory | awk '{print $2}')
 launcher=("$PREFIX/bin/python" "$PREFIX/share/lca-toolkit/launcher.py")
 as_user() { sudo -H -u "$user" "$@"; }
-ask() { osascript -e "tell application (path to frontmost application as text)" -e "$1" -e "end tell" 2>/dev/null; }
+# Dialogs must run in the user's GUI session: a root osascript from the pkg's postinstall
+# fails silently there. `activate` brings the dialog in front of the Installer window.
+# Errors (incl. "User canceled") go to /var/log/install.log.
+ask() { launchctl asuser "$uid" sudo -H -u "$user" osascript -e "activate" -e "$1"; }
 
 answer=$(ask 'button returned of (display dialog "Also download the @MATERIAL_NAME@ teaching material? This needs an internet connection. JupyterLab will then open in this folder." buttons {"Skip", "Download"} default button "Download" with title "@MATERIAL_NAME@")')
 [[ "$answer" == "Download" ]] || exit 0

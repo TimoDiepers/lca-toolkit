@@ -156,6 +156,8 @@ def construct_yaml(
     extra_files = [{f"wheels/{w.name}": f"{WHEEL_DIR_IN_PREFIX}/{w.name}"} for w in wheels]
     extra_files.append({"requirements.txt": f"{WHEEL_DIR_IN_PREFIX}/requirements.txt"})
     extra_files.append({"launcher.py": f"{SHARE_IN_PREFIX}/launcher.py"})
+    # JupyterLab defaults for this environment (start the kernel without asking)
+    extra_files.append({"jupyterlab_overrides.json": "share/jupyter/lab/settings/overrides.json"})
     if material:
         extra_files.append({"material.json": f"{SHARE_IN_PREFIX}/material.json"})
     cfg = {
@@ -218,6 +220,7 @@ def main() -> None:
     wheels = download_wheels(pypi, out / "wheels")
     material = material_from_env()
     shutil.copy(LAUNCHER, out / "launcher.py")
+    shutil.copy(LAUNCHER.parent / "jupyterlab_overrides.json", out / "jupyterlab_overrides.json")
     if material:
         (out / "material.json").write_text(json.dumps(material, indent=2))
         if args.platform == "win-64":

@@ -24,12 +24,18 @@ End-user instructions to hand out: [docs/install-guide.md](docs/install-guide.md
 
 ## What gets installed where
 
-| | Windows | macOS |
-|---|---|---|
-| Software (environment) | `%USERPROFILE%\lca-toolkit` | `~/lca-toolkit` |
-| Shortcuts | Start Menu → *LCA Toolkit*, plus desktop | `~/Applications` |
-| JupyterLab opens in | `%USERPROFILE%\LCA-Notebooks` | `~/LCA-Notebooks` |
-| Brightway projects | Brightway default data directory (shared by AB and JupyterLab) | same |
+Both installers let the user choose **"Just me"** (no admin rights needed, the default) or
+**"All users"** (admin password required):
+
+| | Windows: just me | Windows: all users | macOS: just me | macOS: all users |
+|---|---|---|---|---|
+| Software (environment) | `%USERPROFILE%\lca-toolkit` | `%ALLUSERSPROFILE%\lca-toolkit` (usually `C:\ProgramData\lca-toolkit`) | `~/Library/lca-toolkit` | `/Library/lca-toolkit` |
+| Shortcuts | Start Menu → *LCA Toolkit*, plus desktop | Start Menu (all users) | `~/Applications` | `/Applications` |
+
+For every user:
+- JupyterLab opens in `LCA-Notebooks` in the home folder (`%USERPROFILE%\LCA-Notebooks` or `~/LCA-Notebooks`).
+- Brightway projects are kept in Brightway's default data directory, which Activity Browser and JupyterLab share.
+- On macOS, the environment folder belongs to the installing user even for "all users", so that user can still `pip install` extra packages.
 
 The installer does not touch `PATH`, shell init files or the registry's "default Python",
 so it can't interfere with other Python/conda installations.
@@ -173,16 +179,15 @@ The name "LCA Toolkit" appears in these places, so keep them in sync:
 
 | What | Where |
 |---|---|
-| Installer title + file name, install folder, shortcut package name | constants block at the top of `tools/make_installer.py` (`NAME`, `COMPANY`, `PREFIX_DIR`, `SHORTCUTS_PACKAGE`) |
+| Installer title + file name, install folder, shortcut package name, macOS bundle-ID prefix | constants block at the top of `tools/make_installer.py` (`NAME`, `COMPANY`, `PREFIX_DIR`, `SHORTCUTS_PACKAGE`, `BUNDLE_ID_PREFIX`) |
 | Shortcut package name | `recipe/shortcuts/recipe.yaml` (`package.name`) |
 | Shortcut names, Start Menu folder, macOS bundle names/IDs, notebook folder | `recipe/shortcuts/menu.json` |
 | Install folder + shortcut names in the smoke test | `.github/workflows/build.yml` |
 | Installer version | `version` in `pixi.toml` (`[workspace]`) |
 | User-facing text | `README.md`, `docs/install-guide.md` |
 
-> ⚠️ Keep the install folder (`PREFIX_DIR`) and the notebook folder (`LCA-Notebooks`)
-> different in more than upper/lower case. macOS file systems are case-insensitive, so
-> `~/lca-toolkit` and `~/LCA-Toolkit` would be the same folder.
+> ⚠️ Keep the macOS bundle identifiers in `menu.json` starting with `BUNDLE_ID_PREFIX`.
+> The macOS pre-install step uses it to find and replace old shortcuts (see *Shortcuts*).
 
 ---
 
@@ -198,6 +203,10 @@ Each entry in `menu_items` becomes one shortcut. `command` is what runs, and the
   `$PREFIX/_conda shell.bash activate`. menuinst only looks for a standalone conda named
   `_conda.exe`, but constructor installs it as `_conda` on macOS, so menuinst's activation
   would call a bare `conda` that doesn't exist on users' machines.
+- menuinst refuses to overwrite an existing `.app` (`App already exists`), and the pkg
+  still reports success. A `pre_install` script (written by `make_installer.py`)
+  therefore deletes the apps whose bundle identifier starts with `BUNDLE_ID_PREFIX`
+  before the shortcuts are created.
 - JupyterLab uses `"terminal": true`. The terminal window shows the server log, and
   closing it stops JupyterLab.
 
@@ -232,9 +241,10 @@ macOS (no admin rights needed):
 
 ```bash
 installer -pkg build/osx-arm64/installer/*.pkg -target CurrentUserHomeDirectory
-~/lca-toolkit/bin/python tests/smoke.py --launch
+~/Library/lca-toolkit/bin/python tests/smoke.py --launch
 # clean up:
-rm -rf ~/lca-toolkit ~/Applications/"Activity Browser (LCA Toolkit).app" ~/Applications/"JupyterLab (LCA Toolkit).app"
+rm -rf ~/Library/lca-toolkit ~/Applications/"Activity Browser (LCA Toolkit).app" ~/Applications/"JupyterLab (LCA Toolkit).app"
+# all-users variant: sudo installer -pkg … -target /   → /Library/lca-toolkit, /Applications
 ```
 
 Windows (PowerShell):
@@ -279,6 +289,9 @@ Triggers:
   guide). Windows SmartScreen requires "More info → Run anyway". Proper signing needs an Apple Developer ID and a
   Windows code-signing certificate, plus extra constructor settings
   (`signing_identity_name`, `notarization_identity_name`, `signing_certificate`).
+- **Upgrading needs an uninstall first.** constructor's pkg refuses to install if the
+  target folder already exists ("Chosen path already exists!"). On Windows, the
+  installer offers to remove the old version.
 - **Windows paths with spaces.** constructor refuses install paths with spaces. If the
   user name contains one, choose e.g. `C:\lca-toolkit` in the installer.
 - **ecoinvent** can't be bundled (license). Users import it in Activity Browser with

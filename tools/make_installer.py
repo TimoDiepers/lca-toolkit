@@ -36,6 +36,7 @@ COMPANY = "LCA Toolkit"
 PREFIX_DIR = "lca-toolkit"  # install folder in the user's home directory
 SHORTCUTS_PACKAGE = "lca-toolkit-shortcuts"  # must match recipe/shortcuts/recipe.yaml
 WHEEL_DIR_IN_PREFIX = "lca-toolkit-wheels"  # temporary, removed after post-install
+BUNDLE_ID_PREFIX = "io.github.lca-toolkit."  # macOS CFBundleIdentifier prefix used in menu.json
 
 
 def current_platform() -> str:
@@ -102,6 +103,26 @@ def write_post_install(out: Path, plat: str, wheels: list[Path]) -> str:
     return script.name
 
 
+def write_pre_install_osx(out: Path) -> str:
+    # menuinst refuses to overwrite an existing .app ("App already exists"), and the pkg still
+    # reports success, so reinstalls/updates would keep stale shortcuts. Remove our own apps
+    # (matched by bundle identifier from menu.json) before the shortcuts are created.
+    script = out / "pre_install.sh"
+    script.write_text(
+        "#!/bin/bash\n"
+        'case "$PREFIX" in\n'
+        '    /Library/*) apps=/Applications ;;\n'
+        '    *) apps="$(dirname "$(dirname "$PREFIX")")/Applications" ;;  # ~/Library/<x> -> ~/Applications\n'
+        "esac\n"
+        'for app in "$apps"/*.app; do\n'
+        '    id=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$app/Contents/Info.plist" 2>/dev/null)\n'
+        f'    case "$id" in {BUNDLE_ID_PREFIX}*) rm -rf "$app" ;; esac\n'
+        "done\n"
+        "exit 0\n"
+    )
+    return script.name
+
+
 def construct_yaml(plat: str, version: str, specs: list[str], wheels: list[Path], post_install: str) -> dict:
     extra_files = [{f"wheels/{w.name}": f"{WHEEL_DIR_IN_PREFIX}/{w.name}"} for w in wheels]
     extra_files.append({"requirements.txt": f"{WHEEL_DIR_IN_PREFIX}/requirements.txt"})
@@ -125,14 +146,20 @@ def construct_yaml(plat: str, version: str, specs: list[str], wheels: list[Path]
             "installer_filename": f"{NAME}-{version}-Windows-x86_64.exe",
             # Must differ from the notebook folder (LCA-Notebooks) the JupyterLab shortcut opens.
             "default_prefix": f"%USERPROFILE%\\{PREFIX_DIR}",
+            "default_prefix_all_users": f"%ALLUSERSPROFILE%\\{PREFIX_DIR}",
             "register_python_default": False,
         }
     else:
         cfg |= {
             "installer_type": "pkg",
             "installer_filename": f"{NAME}-{version}-macOS-arm64.pkg",
-            "pkg_name": PREFIX_DIR,  # .pkg installs to ~/<pkg_name>
-            "pkg_domains": {"enable_anywhere": False, "enable_currentUserHome": True, "enable_localSystem": False},
+            # "Install for me only" -> ~/Library/<pkg_name>, shortcuts in ~/Applications;
+            # "Install for all users" (admin) -> /Library/<pkg_name>, shortcuts in /Applications.
+            # Without the Library component a system install would target / (read-only on macOS).
+            "pkg_name": PREFIX_DIR,
+            "default_location_pkg": "Library",
+            "pre_install": "pre_install.sh",
+            "pkg_domains": {"enable_anywhere": False, "enable_currentUserHome": True, "enable_localSystem": True},
         }
     return cfg
 
@@ -156,6 +183,8 @@ def main() -> None:
     specs = [conda_spec(u) for u in conda_urls]
     wheels = download_wheels(pypi, out / "wheels")
     post_install = write_post_install(out, args.platform, wheels)
+    if args.platform == "osx-arm64":
+        write_pre_install_osx(out)
     (out / "construct.yaml").write_text(
         yaml.safe_dump(construct_yaml(args.platform, args.version, specs, wheels, post_install), sort_keys=False)
     )

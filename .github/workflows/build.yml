@@ -39,8 +39,16 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           installer -pkg build/osx-arm64/installer/*.pkg -target CurrentUserHomeDirectory
-          ~/lca-toolkit/bin/python tests/smoke.py --launch
+          ~/Library/lca-toolkit/bin/python tests/smoke.py --launch
           ls ~/Applications/"Activity Browser (LCA Toolkit).app" ~/Applications/"JupyterLab (LCA Toolkit).app"
+
+      - name: Install for all users and smoke-test (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          sudo installer -pkg build/osx-arm64/installer/*.pkg -target /
+          /Library/lca-toolkit/bin/python tests/smoke.py
+          ls /Applications/"Activity Browser (LCA Toolkit).app" /Applications/"JupyterLab (LCA Toolkit).app"
+          grep -o "'/Library/lca-toolkit/_conda'" /Applications/"Activity Browser (LCA Toolkit).app"/Contents/MacOS/*-script
 
       - name: Install and smoke-test (Windows)
         if: runner.os == 'Windows'
@@ -52,6 +60,17 @@ jobs:
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           Get-ChildItem -Recurse "$env:APPDATA\Microsoft\Windows\Start Menu\Programs" -Filter "*LCA Toolkit*.lnk" | Tee-Object -Variable lnks
           if (-not $lnks) { throw "Start Menu shortcuts missing" }
+
+      - name: Install for all users and smoke-test (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $exe = (Get-ChildItem build/win-64/installer/*.exe).FullName
+          Start-Process $exe -Wait -ArgumentList '/S', '/InstallationType=AllUsers', '/RegisterPython=0', '/AddToPath=0', "/D=$env:ProgramData\lca-toolkit"
+          & "$env:ProgramData\lca-toolkit\python.exe" tests/smoke.py
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          Get-ChildItem -Recurse "$env:ProgramData\Microsoft\Windows\Start Menu\Programs" -Filter "*LCA Toolkit*.lnk" | Tee-Object -Variable lnks
+          if (-not $lnks) { throw "All-users Start Menu shortcuts missing" }
 
       - uses: actions/upload-artifact@v4
         with:

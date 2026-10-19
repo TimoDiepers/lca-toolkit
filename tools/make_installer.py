@@ -9,7 +9,8 @@ constructor only understands conda packages, so this script:
 3. adds a post-install step that pip-installs those wheels offline (--no-index),
 4. ships launcher/launcher.py (used by the JupyterLab shortcut) into the environment,
 5. optionally adds the "teaching material" steps (see below),
-6. renders construct.yaml and runs constructor.
+6. renders construct.yaml and runs constructor (via tools/run_constructor.py, which lets the
+   installers replace an existing installation instead of refusing).
 
 Teaching material (optional): set MATERIAL_GIT_URL (git URL, may contain a read-only
 token) and optionally MATERIAL_NAME (folder name, default: repo name) and MATERIAL_BRANCH.
@@ -182,6 +183,8 @@ def construct_yaml(
             "default_prefix": f"%USERPROFILE%\\{PREFIX_DIR}",
             "default_prefix_all_users": f"%ALLUSERSPROFILE%\\{PREFIX_DIR}",
             "register_python_default": False,
+            # constructor's template, patched to offer replacing an existing installation
+            "nsis_template": "main.nsi.tmpl",
         }
         if material:
             cfg["post_install_pages"] = ["material_pages.nsi"]
@@ -230,6 +233,10 @@ def main() -> None:
     post_install = write_post_install(out, args.platform, wheels, material)
     if args.platform == "osx-arm64":
         write_pre_install_osx(out)
+    else:
+        from run_constructor import patched_nsis_template
+
+        (out / "main.nsi.tmpl").write_text(patched_nsis_template())
     (out / "construct.yaml").write_text(
         yaml.safe_dump(
             construct_yaml(args.platform, args.version, specs, wheels, post_install, material), sort_keys=False
@@ -241,8 +248,10 @@ def main() -> None:
     )
 
     if not args.no_build:
+        # run_constructor.py = constructor + our "replace an existing installation" patches
         subprocess.run(
-            ["constructor", str(out), "--output-dir", str(out / "installer"), "--platform", args.platform],
+            [sys.executable, str(ROOT / "tools" / "run_constructor.py"), str(out),
+             "--output-dir", str(out / "installer"), "--platform", args.platform],
             check=True,
         )
 

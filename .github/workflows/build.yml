@@ -60,6 +60,15 @@ jobs:
           ls ~/Applications/"LCA Browser.app" ~/Applications/"LCA Notebooks.app"
           ls ~/Applications/"LCA Browser.app"/Contents/Resources/*.icns
 
+      - name: Reinstall over the existing installation (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          touch ~/Library/lca-toolkit/old-install-marker
+          installer -pkg build/osx-arm64/installer/*.pkg -target CurrentUserHomeDirectory
+          test ! -e ~/Library/lca-toolkit/old-install-marker  # old folder was replaced
+          ~/Library/lca-toolkit/bin/python tests/smoke.py
+          ls ~/Applications/"LCA Browser.app" ~/Applications/"LCA Notebooks.app"
+
       - name: Install for all users and smoke-test (macOS)
         if: runner.os == 'macOS'
         run: |
@@ -80,6 +89,20 @@ jobs:
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           Get-ChildItem -Recurse "$env:APPDATA\Microsoft\Windows\Start Menu\Programs" -Filter "LCA *.lnk" | Tee-Object -Variable lnks
           if (-not $lnks) { throw "Start Menu shortcuts missing" }
+
+      - name: Reinstall over the existing installation (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $exe = (Get-ChildItem build/win-64/installer/*.exe).FullName
+          New-Item "$env:USERPROFILE\lca-toolkit\old-install-marker" -ItemType File | Out-Null
+          $p = Start-Process $exe -Wait -PassThru -ArgumentList '/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', "/D=$env:USERPROFILE\lca-toolkit"
+          if ($p.ExitCode) { throw "reinstall failed with exit code $($p.ExitCode)" }
+          if (Test-Path "$env:USERPROFILE\lca-toolkit\old-install-marker") { throw "old installation was not replaced" }
+          & "$env:USERPROFILE\lca-toolkit\python.exe" tests/smoke.py
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          Get-ChildItem -Recurse "$env:APPDATA\Microsoft\Windows\Start Menu\Programs" -Filter "LCA *.lnk" | Tee-Object -Variable lnks
+          if (-not $lnks) { throw "Start Menu shortcuts missing after reinstall" }
 
       - name: Install for all users and smoke-test (Windows)
         if: runner.os == 'Windows'
@@ -109,7 +132,15 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           merge-multiple: true
+      # Copies without the version in the name, so the README's
+      # releases/latest/download/<name> links always point to the newest release.
+      - name: Add copies with stable file names
+        run: |
+          cp build/win-64/installer/*.exe LCA-Toolkit-Windows-x86_64.exe
+          cp build/osx-arm64/installer/*.pkg LCA-Toolkit-macOS-arm64.pkg
       - uses: softprops/action-gh-release@v2
         with:
           files: |
             build/*/installer/*
+            LCA-Toolkit-Windows-x86_64.exe
+            LCA-Toolkit-macOS-arm64.pkg

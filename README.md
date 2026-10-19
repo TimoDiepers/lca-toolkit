@@ -1,16 +1,143 @@
-# LCA Toolkit installer
+# LCA Toolkit
 
-One-click installers that set up a complete local LCA environment:
+Everything you need for life cycle assessment (LCA) on your own computer, installed with one
+click: **Activity Browser** (point-and-click LCA) and **JupyterLab** (LCA in Python notebooks),
+both based on **Brightway**. No programming knowledge or terminal needed.
 
-- **Brightway 2.5** (bw2data, bw2calc, bw2io, …)
-- **Activity Browser 3** (newest beta)
-- **JupyterLab** for working with Brightway in notebooks
+After installing you get two programs:
 
-Everything goes into one self-contained environment, with two Start Menu / Applications
-shortcuts: **LCA Browser** (Activity Browser) and **LCA Notebooks** (JupyterLab). End users
-never need a terminal, conda or Python knowledge, which makes this suitable for teaching and
-for non-programmers. Optionally, the installer also downloads teaching material and restores
-a Brightway project backup (see *Optional teaching material*).
+| | | |
+|---|---|---|
+| <img src="recipe/shortcuts/icons/lca-browser.svg" width="48" alt=""> | **LCA Browser** | Activity Browser: build and calculate LCA models with menus and tables |
+| <img src="recipe/shortcuts/icons/lca-notebooks.svg" width="48" alt=""> | **LCA Notebooks** | JupyterLab: work through notebooks (e.g. the course material) with Brightway |
+
+## Download
+
+<!-- The links point to the newest GitHub release (assets with stable names, added by the
+     release job in .github/workflows/build.yml). They work once the first v* tag has been
+     released, and only for people who can see the repository while it is private. -->
+
+| Your computer | Download |
+|---|---|
+| **Windows** 10 or 11 (64-bit) | [**LCA-Toolkit-Windows-x86_64.exe**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Windows-x86_64.exe) (about 0.8 GB) |
+| **Mac with Apple Silicon** (M1, M2, M3, M4, …), macOS 13 or newer | [**LCA-Toolkit-macOS-arm64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-arm64.pkg) (about 0.5 GB) |
+
+Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releases).
+
+- You need about **3 GB** of free disk space.
+- The installation itself works offline. Downloading the optional teaching material needs
+  internet.
+- **Not supported:** Macs with an Intel processor, Linux. Not sure which Mac you have?
+  Apple menu → *About This Mac*: "Chip: Apple M…" means Apple Silicon.
+
+## Installing on Windows
+
+1. Double-click the downloaded `.exe`.
+2. Windows shows **"Windows protected your PC"**. This appears because the installer is
+   not signed with a paid certificate. Click **More info**, then **Run anyway**.
+3. Click through the installer:
+   - **Just Me** (default, recommended) needs no admin rights. **All Users** needs an
+     admin password.
+   - If your Windows user name contains a space, change the install folder to e.g.
+     `C:\lca-toolkit`.
+4. If the installer offers the **teaching material** and the **project backup**, see
+   [below](#teaching-material-and-project-backup).
+5. Start **LCA Browser** or **LCA Notebooks** from the Start Menu or the desktop.
+
+## Installing on macOS
+
+1. Double-click the downloaded `.pkg`. macOS says *Apple could not verify
+   "LCA-Toolkit-….pkg" is free of malware…*. This appears because the installer isn't
+   signed by an Apple developer account. Click **Done** (not "Move to Trash").
+2. Open **System Settings → Privacy & Security**, scroll down to
+   *"LCA-Toolkit-….pkg" was blocked…* and click **Open Anyway**. Enter your Mac password
+   and confirm **Open Anyway** again. The installer starts.
+3. At *Installation Type* / *Destination*, choose:
+   - **Install for me only** (recommended, no admin password needed), or
+   - **Install for all users of this computer** (needs an admin password).
+4. Finish the installer. If it offers the **teaching material** and the **project backup**,
+   see [below](#teaching-material-and-project-backup). These questions pop up in small
+   windows near the end; they may appear behind the installer window.
+5. Start **LCA Browser** or **LCA Notebooks**. The easiest way is Spotlight: press
+   ⌘ Space, type **LCA**, pick one with the arrow keys and press Enter.
+   - "Install for me only": the apps are in the *Applications* folder **inside your home
+     folder** (Finder → Go → Home → Applications), not the main Applications folder.
+   - "Install for all users": the apps are in the normal *Applications* folder.
+   - Tip: while an app runs, right-click its Dock icon → Options → **Keep in Dock**.
+
+## Teaching material and project backup
+
+If your course's installer includes them, you're asked at the end of the installation:
+
+1. **Download the teaching material?** Choose a folder (default: *Documents*). The material
+   is downloaded into a subfolder there, and LCA Notebooks then always opens in it.
+2. **Do you already have the project backup (`.tar.gz`)?** If you downloaded it already,
+   choose the file. It is restored so the project is directly available in LCA Browser and
+   LCA Notebooks. Large projects can take a few minutes. If a project with the same name
+   exists, you're asked whether to overwrite it.
+
+Both are optional.
+
+## Using the programs
+
+- **LCA Notebooks** opens JupyterLab in your web browser, plus a terminal window with its
+  log. Keep that window open while you work, and close it to stop JupyterLab. It opens in
+  the teaching material folder if you downloaded it, otherwise in the `LCA-Notebooks`
+  folder in your home folder.
+- **LCA Browser** and LCA Notebooks use the same Brightway projects, so a project you
+  create in one shows up in the other.
+- **ecoinvent** is not included (license). Import it in LCA Browser with your own
+  ecoinvent account.
+
+## Updating
+
+Download the new installer and run it like the first time, with the same choice ("Just
+Me" / "for me only", or all users). It detects the existing installation and asks whether
+to **replace** it. Your notebooks, teaching material and Brightway projects are kept. Close
+LCA Browser and LCA Notebooks first.
+
+## Uninstalling
+
+- **Windows:** Settings → Apps → Installed apps → "LCA-Toolkit" → ⋯ → Uninstall.
+- **macOS:** move the two apps **LCA Browser** and **LCA Notebooks** to the Trash (in
+  *Applications* in your home folder, or the main *Applications* folder). Then, in Finder,
+  press ⇧⌘G, go to `~/Library/lca-toolkit` ("for me only") or `/Library/lca-toolkit` ("for
+  all users"), and move that folder to the Trash.
+
+This keeps your notebooks, the teaching material and your Brightway projects. To remove
+those too, delete:
+
+| What | Windows | macOS |
+|---|---|---|
+| Teaching material | the folder you chose (default `Documents\<material>`) | the folder you chose (default `~/Documents/<material>`) |
+| Default notebook folder | `%USERPROFILE%\LCA-Notebooks` | `~/LCA-Notebooks` |
+| Brightway projects ⚠️ shared with any other Brightway installation | `%LOCALAPPDATA%\pylca\Brightway3` | `~/Library/Application Support/Brightway3` |
+| Settings | `%APPDATA%\lca-toolkit` | `~/Library/Application Support/lca-toolkit` |
+
+## Troubleshooting
+
+- **macOS: nothing happens / "blocked" when opening the installer.** Use *Open Anyway*
+  in System Settings → Privacy & Security (step 2 above).
+- **Windows: "Directory … is not empty".** The folder contains something that isn't an LCA
+  Toolkit installation. Choose another folder.
+- **Windows: the installer refuses a path with spaces.** Choose e.g. `C:\lca-toolkit`.
+- **LCA Notebooks closed / the browser tab says the server is gone.** You closed the
+  terminal window. Start LCA Notebooks again.
+- **Teaching material download failed during installation.** Check your internet
+  connection and run the installer again (choose *Replace*).
+
+---
+
+# For maintainers
+
+Everything below is about building and changing the installers.
+
+**How the toolkit is put together:**
+- **Brightway 2.5** (bw2data, bw2calc, bw2io, …), **Activity Browser 3** (newest beta) and
+  **JupyterLab** go into one self-contained environment.
+- The two shortcuts above are created at install time.
+- Optionally, the installer also downloads teaching material and restores a Brightway
+  project backup (see *Optional teaching material*).
 
 | Platform | Installer file | Fast sparse solver |
 |---|---|---|
@@ -19,10 +146,6 @@ a Brightway project backup (see *Optional teaching material*).
 
 Intel Macs are not supported: conda-forge has no `qt6-webengine` build for `osx-64`, and
 Activity Browser needs it.
-
-End-user instructions to hand out: [docs/install-guide.md](docs/install-guide.md).
-
----
 
 ## What gets installed where
 
@@ -58,11 +181,11 @@ so it can't interfere with other Python/conda installations.
 | `launcher/launcher.py` | Shipped into the env: starts JupyterLab in the right folder with only the toolkit kernel; fetches/updates teaching material; restores project backups | you change what the LCA Notebooks shortcut or the material steps do |
 | `launcher/jupyterlab_overrides.json` | Shipped as JupyterLab's `overrides.json`: default settings (auto-start the kernel) | you want other JupyterLab defaults |
 | `installer/windows_material_pages.nsi`, `installer/macos_material_dialogs.sh` | Optional installer steps for teaching material + project restore | you change those dialogs |
+| `tools/run_constructor.py`, `installer/macos_checks_before_install.sh` | constructor with our patches: replace an existing installation instead of refusing (see *Updating installations*) | you change the update behaviour, or constructor changes the patched code |
 | `tests/test_launcher.py` | Tests the launcher's material + restore steps in an installed env | — |
 | `recipe/shortcuts/recipe.yaml` | rattler-build recipe for the tiny `lca-toolkit-shortcuts` conda package that carries `menu.json` and the icons | you rename the shortcut package; bump its version whenever `menu.json` or an icon changes |
 | `tests/smoke.py` | Checks an *installed* environment: solver active, Qt WebEngine, AB, JupyterLab, AB starts headless | you add packages that should be verified |
 | `.github/workflows/build.yml` | CI: builds both installers, installs them on fresh runners, runs the tests, publishes releases | you change platforms or release flow |
-| `docs/install-guide.md` | End-user install guide | names or install steps change |
 | `build/` (git-ignored) | Build outputs: rendered `construct.yaml`, downloaded wheels, final installers | — |
 | `.superpowers/` (git-ignored) | Scratch files from design sessions (icon mockups) | — |
 
@@ -245,6 +368,31 @@ Where this is implemented:
 
 ---
 
+## Updating installations
+
+constructor refuses to install into a folder that already exists (macOS: "Chosen path
+already exists!", Windows: "Directory … is not empty"). To let users update by simply
+running the new installer, `tools/make_installer.py` runs constructor through
+`tools/run_constructor.py`, which patches both installers:
+
+- **Windows:** a patched copy of constructor's NSIS template (`nsis_template`). On the
+  directory page, if the folder contains `Uninstall-LCA-Toolkit.exe` and
+  `conda-meta\history`, the installer asks "Replace it?". On yes, it runs the old
+  uninstaller silently (removing its shortcuts and registry entries) and deletes the folder.
+- **macOS:** constructor's `checks_before_install.sh` (the pkg's very first script) is swapped
+  for `installer/macos_checks_before_install.sh`. If the folder contains
+  `conda-meta/history` and `_conda`, it asks "Replace?" in a dialog and then deletes the
+  folder. The old apps are removed by the `pre_install` step anyway (see *Shortcuts*).
+- Anything else in the way is still refused. Silent/command-line installs (Windows `/S`,
+  `installer -pkg …`) replace without asking. CI tests this by installing twice.
+- Only the software folder is replaced. Notebooks, teaching material, Brightway projects
+  and settings live elsewhere and are kept.
+- If constructor changes the patched code, `run_constructor.py` fails the build with an
+  assertion instead of silently shipping an unpatched installer. Update the copied text
+  there, or compare the macOS script with constructor's `osx/checks_before_install.sh`.
+
+---
+
 ## Renaming / rebranding
 
 The name "LCA Toolkit" appears in these places, so keep them in sync:
@@ -258,7 +406,7 @@ The name "LCA Toolkit" appears in these places, so keep them in sync:
 | Fallback notebook folder (`LCA-Notebooks`), config folder | `launcher/launcher.py` |
 | Install folder + shortcut names checked in CI | `.github/workflows/build.yml` |
 | Installer version | `version` in `pixi.toml` (`[workspace]`) |
-| User-facing text | `README.md`, `docs/install-guide.md` |
+| User-facing text, download links (repository URL) | top of `README.md` |
 
 > ⚠️ Keep the macOS bundle identifiers in `menu.json` starting with `BUNDLE_ID_PREFIX`.
 > The macOS pre-install step uses it to find and replace old shortcuts (see *Shortcuts*).
@@ -366,7 +514,8 @@ double-click the installer instead.
 1. builds the installer (`pixi run -e build installer`), with the teaching material if the
    `MATERIAL_GIT_URL` secret is set (and the optional `MATERIAL_NAME` / `MATERIAL_BRANCH`
    repository variables),
-2. installs it silently on the runner, first "just me", then "all users",
+2. installs it silently on the runner: "just me", then again over that installation
+   (checks that it is replaced), then "all users",
 3. runs `tests/smoke.py --launch` with the installed Python (checks the solver, Qt
    WebEngine, AB and JupyterLab imports, and that AB stays up for 30 s headless) and
    `tests/test_launcher.py` (material download/update, project restore), and checks that
@@ -380,7 +529,10 @@ Triggers (a plain push to `main` does **not** build):
 - **manual run** (Actions → *Build installers* → *Run workflow*): updates Activity Browser
   to the newest beta first (checkbox, on by default). The lock used is in the artifact;
 - **tag `v*`**: build + test with the committed `pixi.lock`, then publish both installers
-  as a GitHub release. See *Making a release* below.
+  as a GitHub release, plus copies without the version in the file name
+  (`LCA-Toolkit-Windows-x86_64.exe`, `LCA-Toolkit-macOS-arm64.pkg`). The download links at
+  the top of this README point to those via `releases/latest/download/…`. See *Making a
+  release* below.
 
 ### Making a release
 
@@ -429,8 +581,8 @@ Things to keep in mind:
   the clone URL) when the `MATERIAL_GIT_URL` secret is set. Don't publish such installers
   anywhere public. For a public release, build without the secret, or accept that the
   read-only token can be extracted (and revoke it when the course ends).
-- **Upgrading users:** installing a new version requires uninstalling the old one first
-  (see *Known caveats*). Tell students in the release notes.
+- **Upgrading users** just run the new installer; it offers to replace the old
+  installation (see *Updating installations* below).
 - A manual run (Actions → *Run workflow*) gives the same installers as artifacts without
   publishing anything. Use it for test builds; the artifacts expire after 90 days.
 
@@ -444,9 +596,6 @@ Things to keep in mind:
   guide). Windows SmartScreen requires "More info → Run anyway". Proper signing needs an Apple Developer ID and a
   Windows code-signing certificate, plus extra constructor settings
   (`signing_identity_name`, `notarization_identity_name`, `signing_certificate`).
-- **Upgrading needs an uninstall first.** constructor's pkg refuses to install if the
-  target folder already exists ("Chosen path already exists!"). On Windows, the
-  installer offers to remove the old version.
 - **Windows paths with spaces.** constructor refuses install paths with spaces. If the
   user name contains one, choose e.g. `C:\lca-toolkit` in the installer.
 - **ecoinvent** can't be bundled (license). Users import it in Activity Browser with

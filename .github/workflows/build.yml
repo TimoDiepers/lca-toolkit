@@ -20,6 +20,7 @@ jobs:
           - { os: macos-14, platform: osx-arm64 }
           - { os: windows-latest, platform: win-64 }
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 

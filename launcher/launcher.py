@@ -73,6 +73,14 @@ def git_exe() -> str:
     return found
 
 
+def run_git(*args: str) -> int:
+    # The token is in the URL, so git never needs to ask. Disable credential helpers and
+    # prompts: conda-forge's Windows git otherwise pops up a credential-helper selector
+    # (and hangs forever when nobody can click it).
+    env = dict(os.environ, GIT_TERMINAL_PROMPT="0", GCM_INTERACTIVE="never")
+    return subprocess.run([git_exe(), "-c", "credential.helper=", *args], env=env).returncode
+
+
 def fetch_material(parent: Path) -> int:
     info = material()
     if info is None:
@@ -86,12 +94,10 @@ def fetch_material(parent: Path) -> int:
         return 1
     else:
         dest.parent.mkdir(parents=True, exist_ok=True)
-        cmd = [git_exe(), "clone"]
-        if info.get("branch"):
-            cmd += ["--branch", info["branch"]]
-        result = subprocess.run(cmd + [info["url"], str(dest)])
-        if result.returncode:
-            return result.returncode
+        branch = ["--branch", info["branch"]] if info.get("branch") else []
+        rc = run_git("clone", *branch, info["url"], str(dest))
+        if rc:
+            return rc
     save_config(material_dir=str(dest))
     print(f"Teaching material in {dest}")
     return 0
@@ -103,7 +109,7 @@ def update_material() -> int:
         print("No teaching material installed.", file=sys.stderr)
         return 1
     # --ff-only: never merge into (or overwrite) the user's own edits
-    return subprocess.run([git_exe(), "-C", target, "pull", "--ff-only"]).returncode
+    return run_git("-C", target, "pull", "--ff-only")
 
 
 def restore_project(archive: Path, overwrite: bool) -> int:

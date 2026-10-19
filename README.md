@@ -281,6 +281,6 @@ Triggers:
   user name contains one, choose e.g. `C:\lca-toolkit` in the installer.
 - **ecoinvent** can't be bundled (license). Users import it in Activity Browser with
   their own ecoinvent account.
-- **Size:** the installer is about 0.5 GB, and the installed environment is about 2 GB.
+- **Size:** the installer is about 0.5 GB (macOS) or 0.8 GB (Windows, MKL), and the installed environment is about 2 GB.
 - **No custom icons** yet (menuinst default icons). Add `"icon"` entries to `menu.json`
   (`.ico` for Windows, `.icns` for macOS) to change that.

@@ -1,0 +1,53 @@
+[workspace]
+name = "lca-toolkit"
+version = "2026.1.0"  # installer version; bump for each release
+description = "Brightway 2.5 + Activity Browser 3 (beta) + JupyterLab, packaged as one-click installers"
+channels = ["conda-forge"]
+# osx-64 (Intel Mac) is not supported: conda-forge has no qt6-webengine build for it.
+platforms = ["osx-arm64", "win-64"]
+
+# --- The environment that ends up in the installers -----------------------------
+# Edit dependencies here, then run `pixi lock` (or any pixi command) to update pixi.lock.
+# Compiled stack from conda-forge; Activity Browser + Brightway from PyPI, because the
+# conda builds of the AB beta (lca channel) are stuck on numpy<2 / unsolvable deps.
+[dependencies]
+python = "3.13.*"
+pip = "*"
+numpy = "*"
+scipy = "*"
+lxml = "*"
+pyside6 = ">=6.5,<6.12"
+qt6-webengine = "*"
+jupyterlab = "*"
+ipykernel = "*"
+ipywidgets = "*"
+matplotlib = "*"
+
+[target.osx-arm64.dependencies]
+scikit-umfpack = "*"
+
+[target.win-64.dependencies]
+pypardiso = "*"
+
+[pypi-dependencies]
+# Newest beta-branch build at lock time; refresh with `pixi run update-ab`.
+activity-browser = ">=3.0.0b202610120209"
+
+[tasks]
+ab = "activity-browser"
+lab = "jupyter lab"
+update-ab = "pixi update activity-browser"
+
+# --- Installer build tooling (not shipped) -------------------------------------
+[feature.build.dependencies]
+constructor = ">=3.17"
+conda-standalone = "*"
+rattler-build = "*"
+pyyaml = "*"
+
+[feature.build.tasks]
+build-shortcuts = "rattler-build build --recipe recipe/shortcuts --output-dir build/channel"
+installer = { cmd = "python tools/make_installer.py", depends-on = ["build-shortcuts"] }
+
+[environments]
+build = { features = ["build"], no-default-feature = true }

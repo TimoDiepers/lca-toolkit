@@ -1,0 +1,27 @@
+# Tiny conda package that only carries menu.json. constructor lists it under
+# `menu_packages`, so menuinst creates the shortcuts at install time.
+context:
+  version: "1.0"
+
+package:
+  name: lca-toolkit-shortcuts  # keep in sync with SHORTCUTS_PACKAGE in tools/make_installer.py
+  version: ${{ version }}
+
+source:
+  path: .
+
+build:
+  number: 0
+  noarch: generic
+  script:
+    - if: unix
+      then:
+        - mkdir -p "$PREFIX/Menu"
+        - cp menu.json "$PREFIX/Menu/lca-toolkit.json"
+      else:
+        - if not exist "%PREFIX%\Menu" mkdir "%PREFIX%\Menu"
+        - copy menu.json "%PREFIX%\Menu\lca-toolkit.json"
+
+about:
+  summary: Start Menu / Applications shortcuts for the LCA Toolkit environment
+  license: MIT

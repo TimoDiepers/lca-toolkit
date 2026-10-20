@@ -1,17 +1,29 @@
 # LCA Toolkit
 
-Everything you need for [Brightway](https://docs.brightway.dev)-based life cycle assessment
-(LCA) on your own computer, installed with one click:
-[**Activity Browser**](https://github.com/LCA-ActivityBrowser/activity-browser)
-(point-and-click LCA) and **JupyterLab** (LCA in Python notebooks with Brightway). No
-programming knowledge needed, and on Windows and macOS no terminal either.
+Single-click installers for [Brightway](https://docs.brightway.dev)-based life cycle assessment. After installing you get two programs:
 
-After installing you get two programs:
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="recipe/shortcuts/icons/lca-notebooks.svg" width="72" alt=""><br>
+      <b>LCA Notebooks</b><br>
+      Brightway as code in Python notebooks<br><br>
+      <sub>Bundles <a href="https://jupyter.org">JupyterLab</a> and
+      <a href="https://docs.brightway.dev">Brightway 2.5</a>
+      (bw2data, bw2calc, bw2io, bw2analyzer), matplotlib, ipywidgets</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="recipe/shortcuts/icons/lca-browser.svg" width="72" alt=""><br>
+      <b>LCA Browser</b><br>
+      Point-and-click LCA, no code needed<br><br>
+      <sub>Bundles <a href="https://github.com/LCA-ActivityBrowser/activity-browser">Activity Browser</a>
+      3 (beta), the graphical user interface for Brightway</sub>
+    </td>
+  </tr>
+</table>
 
-| | | |
-|---|---|---|
-| <img src="recipe/shortcuts/icons/lca-browser.svg" width="48" alt=""> | **LCA Browser** | [Activity Browser](https://github.com/LCA-ActivityBrowser/activity-browser), the graphical interface for Brightway: import databases, model products and processes, calculate impacts and analyse the results |
-| <img src="recipe/shortcuts/icons/lca-notebooks.svg" width="48" alt=""> | **LCA Notebooks** | JupyterLab: work through notebooks (e.g. the course material) with Brightway |
+Both programs use the same Python environment and the same Brightway projects, so a
+project you create in one shows up in the other.
 
 ## Download
 
@@ -21,10 +33,10 @@ After installing you get two programs:
 
 | Your computer | Download |
 |---|---|
-| **Windows** 10 or 11 (64-bit) | [**LCA-Toolkit-Windows-x86_64.exe**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Windows-x86_64.exe) (about 0.8 GB) |
-| **Mac with Apple Silicon** (M1, M2, M3, M4, …), macOS 13 or newer | [**LCA-Toolkit-macOS-arm64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-arm64.pkg) (about 0.5 GB) |
-| **Mac with Intel processor**, macOS 13 or newer | [**LCA-Toolkit-macOS-x86_64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-x86_64.pkg) (about 0.8 GB) |
-| **Linux** (64-bit, e.g. Ubuntu 22.04 or newer) | [**LCA-Toolkit-Linux-x86_64.sh**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Linux-x86_64.sh) (about 0.8 GB) |
+| **Windows** 10 or 11 (64-bit) | [**LCA-Toolkit-Windows-x86_64.exe**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Windows-x86_64.exe) |
+| **Mac with Apple Silicon** (M1, M2, M3, M4, …), macOS 13 or newer | [**LCA-Toolkit-macOS-arm64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-arm64.pkg) |
+| **Mac with Intel processor**, macOS 13 or newer | [**LCA-Toolkit-macOS-x86_64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-x86_64.pkg) |
+| **Linux** (64-bit, e.g. Ubuntu 22.04 or newer) | [**LCA-Toolkit-Linux-x86_64.sh**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Linux-x86_64.sh) |
 
 Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releases).
 

@@ -22,7 +22,7 @@ ask() { launchctl asuser "$uid" sudo -H -u "$user" osascript -e "activate" -e "$
 url="@MATERIAL_URL@"
 while true; do
     # The text field is prefilled with the example (or the link from a previous attempt).
-    reply=$(ask "set r to display dialog \"Do you want to add external resources from a git repository, e.g. teaching material, tutorials or the files of a study? Paste the link you were given (it may contain an access token), or keep the example. Needs an internet connection; LCA Notebooks then opens in that folder.\" default answer \"$url\" buttons {\"Skip\", \"Download\"} default button \"Download\" with title \"Additional resources\"
+    reply=$(ask "set r to display dialog \"Do you want to add external resources from a git repository, e.g. teaching material, tutorials or the files of a study? Paste the link you were given, or keep the example. Needs an internet connection; LCA Notebooks then opens in that folder.\" default answer \"$url\" buttons {\"Skip\", \"Download\"} default button \"Download\" with title \"Additional resources\"
 if button returned of r is \"Download\" then return text returned of r
 return \"\"") || exit 0
     [[ -n "$reply" ]] || exit 0

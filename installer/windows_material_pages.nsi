@@ -34,7 +34,7 @@ Function MaterialPageShow
     ${NSD_Check} $MaterialCheckbox
     ${NSD_CreateText} 0 44u 100% 13u "@MATERIAL_URL@"
     Pop $MaterialUrlText
-    ${NSD_CreateLabel} 0 59u 100% 10u "Paste the link you were given (it may contain an access token), or keep the example."
+    ${NSD_CreateLabel} 0 59u 100% 10u "Paste the link you were given, or keep the example."
     Pop $0
     ${NSD_CreateLabel} 0 73u 100% 10u "Folder (a subfolder named like the repository is created inside it):"
     Pop $0

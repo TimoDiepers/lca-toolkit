@@ -107,8 +107,7 @@ At the end of the installation you're asked:
 1. **Add external resources from a git repository?** For example teaching material,
    tutorials or the files of a study. The link field is prefilled with
    [Brightway from the ground up](https://github.com/brightway-lca/from-the-ground-up), an
-   introduction to Brightway. If you were given a link (it may contain an access token,
-   like `https://name:token@git.example.org/group/repo.git`), paste it there instead. Then
+   introduction to Brightway. If you were given a link, paste it there instead. Then
    choose a folder (default: *Documents*). The repository is downloaded into a subfolder
    named like it, and LCA Notebooks then always opens there.
 2. **Do you already have the project backup (`.tar.gz`)?** Only asked if you downloaded

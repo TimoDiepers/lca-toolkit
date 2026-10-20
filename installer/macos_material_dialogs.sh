@@ -1,5 +1,5 @@
 
-# --- Optional notebooks (git repository) + project restore -------------------------------
+# --- Optional external resources (git repository) + project restore ---------------------
 # Appended to post_install.sh by tools/make_installer.py, which fills in the suggested
 # repository (SUGGESTED_MATERIAL_URL); users can paste any other link, e.g. course material
 # with a token.
@@ -22,14 +22,14 @@ ask() { launchctl asuser "$uid" sudo -H -u "$user" osascript -e "activate" -e "$
 url="@MATERIAL_URL@"
 while true; do
     # The text field is prefilled with the example (or the link from a previous attempt).
-    reply=$(ask "set r to display dialog \"Download notebooks from a git repository, e.g. your course material? Paste the link you were given (it may contain an access token), or keep the example. Needs an internet connection; LCA Notebooks then opens in that folder.\" default answer \"$url\" buttons {\"Skip\", \"Download\"} default button \"Download\" with title \"Notebooks\"
+    reply=$(ask "set r to display dialog \"Do you want to add external resources from a git repository, e.g. teaching material, tutorials or the files of a study? Paste the link you were given (it may contain an access token), or keep the example. Needs an internet connection; LCA Notebooks then opens in that folder.\" default answer \"$url\" buttons {\"Skip\", \"Download\"} default button \"Download\" with title \"Additional resources\"
 if button returned of r is \"Download\" then return text returned of r
 return \"\"") || exit 0
     [[ -n "$reply" ]] || exit 0
     url=$reply
-    parent=$(ask "POSIX path of (choose folder with prompt \"Choose where to put the notebooks (a subfolder named like the repository is created):\" default location POSIX file \"$home/Documents\")") || exit 0
+    parent=$(ask "POSIX path of (choose folder with prompt \"Choose where to put the resources (a subfolder named like the repository is created):\" default location POSIX file \"$home/Documents\")") || exit 0
     as_user "${launcher[@]}" fetch-material --url "$url" --parent "$parent" && break
-    retry=$(ask 'button returned of (display dialog "The notebooks could not be downloaded. Check the link and your internet connection, and that the folder does not already contain other files." buttons {"Skip", "Try again"} default button "Try again" with icon caution)')
+    retry=$(ask 'button returned of (display dialog "The resources could not be downloaded. Check the link and your internet connection, and that the folder does not already contain other files." buttons {"Skip", "Try again"} default button "Try again" with icon caution)')
     [[ "$retry" == "Try again" ]] || exit 0
 done
 

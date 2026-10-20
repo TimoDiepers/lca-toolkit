@@ -42,7 +42,7 @@ Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releas
 
 - You need about **3 GB** of free disk space (Linux: about **5.5 GB**).
 - The installation itself works offline. Downloading notebooks (optional, see
-  [below](#notebooks-and-project-backup)) needs internet.
+  [below](#additional-resources-and-project-backup)) needs internet.
 - **Which Mac do I have?** Apple menu → *About This Mac*: "Chip: Apple M…" means Apple
   Silicon, "Processor: … Intel …" means Intel.
 
@@ -56,8 +56,8 @@ Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releas
      admin password.
    - If your Windows user name contains a space, change the install folder to e.g.
      `C:\lca-toolkit`.
-4. Optionally download **notebooks** (e.g. your course material) and restore a **project
-   backup**, see [below](#notebooks-and-project-backup).
+4. Optionally add **external resources** from a git repository (e.g. teaching material)
+   and restore a **project backup**, see [below](#additional-resources-and-project-backup).
 5. Start **LCA Browser** or **LCA Notebooks** from the Start Menu or the desktop.
 
 ## Installing on macOS
@@ -71,9 +71,9 @@ Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releas
 3. At *Installation Type* / *Destination*, choose:
    - **Install for me only** (recommended, no admin password needed), or
    - **Install for all users of this computer** (needs an admin password).
-4. Finish the installer. Near the end, small windows ask whether to download **notebooks**
-   (e.g. your course material) and restore a **project backup**, see
-   [below](#notebooks-and-project-backup). They may appear behind the installer window.
+4. Finish the installer. Near the end, small windows ask whether to add **external
+   resources** from a git repository (e.g. teaching material) and restore a **project backup**, see
+   [below](#additional-resources-and-project-backup). They may appear behind the installer window.
 5. Start **LCA Browser** or **LCA Notebooks**. The easiest way is Spotlight: press
    ⌘ Space, type **LCA**, pick one with the arrow keys and press Enter.
    - "Install for me only": the apps are in the *Applications* folder **inside your home
@@ -91,8 +91,8 @@ bash LCA-Toolkit-Linux-x86_64.sh
 ```
 
 1. Press Enter to accept the install location (`~/lca-toolkit`), or type another one.
-2. Answer the questions about **notebooks** and the **project backup** in the terminal
-   (see [below](#notebooks-and-project-backup)). For the backup, type or paste the path of
+2. Answer the questions about **external resources** and the **project backup** in the terminal
+   (see [below](#additional-resources-and-project-backup)). For the backup, type or paste the path of
    the `.tar.gz` file.
 3. Start **LCA Browser** or **LCA Notebooks** from your desktop's application menu
    (category *Science* / *Education*). They can take a few seconds to appear in the menu.
@@ -100,18 +100,19 @@ bash LCA-Toolkit-Linux-x86_64.sh
 For all users: `sudo bash LCA-Toolkit-Linux-x86_64.sh` and choose e.g.
 `/opt/lca-toolkit`. The menu entries then appear for everyone.
 
-## Notebooks and project backup
+## Additional resources and project backup
 
 At the end of the installation you're asked:
 
-1. **Download notebooks from a git repository?** The link field is prefilled with
+1. **Add external resources from a git repository?** For example teaching material,
+   tutorials or the files of a study. The link field is prefilled with
    [Brightway from the ground up](https://github.com/brightway-lca/from-the-ground-up), an
-   introduction to Brightway. If your course gave you a link (it may contain an access
-   token, like `https://name:token@git.example.org/course/material.git`), paste it there
-   instead. Then choose a folder (default: *Documents*). The notebooks are downloaded into a
-   subfolder named like the repository, and LCA Notebooks then always opens in it.
+   introduction to Brightway. If you were given a link (it may contain an access token,
+   like `https://name:token@git.example.org/group/repo.git`), paste it there instead. Then
+   choose a folder (default: *Documents*). The repository is downloaded into a subfolder
+   named like it, and LCA Notebooks then always opens there.
 2. **Do you already have the project backup (`.tar.gz`)?** Only asked if you downloaded
-   notebooks. If your course gave you one, choose the file. It is restored so the project is
+   something in step 1. If you were given one, choose the file. It is restored so the project is
    directly available in LCA Browser and LCA Notebooks. Large projects can take a few
    minutes. If a project with the same name exists, you're asked whether to overwrite it.
 
@@ -121,7 +122,7 @@ Both are optional.
 
 - **LCA Notebooks** opens JupyterLab in your web browser, plus a terminal window with its
   log. Keep that window open while you work, and close it to stop JupyterLab. It opens in
-  the notebooks folder if you downloaded one, otherwise in the `LCA-Notebooks` folder in
+  the downloaded folder from step 1 if there is one, otherwise in the `LCA-Notebooks` folder in
   your home folder.
 - **LCA Browser** and LCA Notebooks use the same Brightway projects, so a project you
   create in one shows up in the other.
@@ -166,7 +167,7 @@ those too, delete:
   an LCA Toolkit installation. Choose another location.
 - **LCA Notebooks closed / the browser tab says the server is gone.** You closed the
   terminal window. Start LCA Notebooks again.
-- **Notebook download failed during installation.** Check the link and your internet
+- **Download from the git repository failed during installation.** Check the link and your internet
   connection and run the installer again (choose *Replace*).
 
 ---
@@ -179,8 +180,8 @@ Everything below is about building and changing the installers.
 - **Brightway 2.5** (bw2data, bw2calc, bw2io, …), **Activity Browser 3** (newest beta) and
   **JupyterLab** go into one self-contained environment.
 - The two shortcuts above are created at install time.
-- At the end, the installer offers to download notebooks from a git repository and to
-  restore a Brightway project backup (see *Notebooks step*).
+- At the end, the installer offers to add external resources from a git repository and to
+  restore a Brightway project backup (see *Additional resources step*).
 
 | Platform (pixi name) | Installer file | Fast sparse solver | Qt / PySide6 from |
 |---|---|---|---|
@@ -210,7 +211,7 @@ installer with `sudo` and an install location such as `/opt/lca-toolkit` does th
 | Linux, all users (`sudo`) | e.g. `/opt/lca-toolkit` | `/usr/share/applications` |
 
 For every user:
-- JupyterLab opens in the notebooks folder if the user downloaded one (see *Notebooks step*). Otherwise it opens in `LCA-Notebooks` in the home folder (`%USERPROFILE%\LCA-Notebooks` or `~/LCA-Notebooks`).
+- JupyterLab opens in the downloaded repository's folder if the user added one (see *Additional resources step*). Otherwise it opens in `LCA-Notebooks` in the home folder (`%USERPROFILE%\LCA-Notebooks` or `~/LCA-Notebooks`).
 - Brightway projects are kept in Brightway's default data directory, which Activity Browser and JupyterLab share.
 - JupyterLab only offers the toolkit's own Python kernel and starts it without asking. Kernels from other Python setups (in `~/Library/Jupyter`, `~/.local/share/jupyter`, `%APPDATA%\jupyter`) are hidden there, because they lack the toolkit's packages.
 - On macOS, the environment folder belongs to the installing user even for "all users", so that user can still `pip install` extra packages.
@@ -230,9 +231,9 @@ so it can't interfere with other Python/conda installations.
 | `recipe/shortcuts/menu.json` | Shortcut definitions (menuinst format): names, icons, commands | you rename, change what a shortcut runs, or add a shortcut |
 | `recipe/shortcuts/icons/` | Shortcut icons: `*.svg` sources, generated `*.icns` / `*.ico` (committed) | you change an icon (then `pixi run -e build icons`) |
 | `tools/make_icons.py` | Renders the SVGs to `.icns` / `.ico` | you change icon sizes or margins |
-| `launcher/launcher.py` | Shipped into the env: starts JupyterLab in the right folder with only the toolkit kernel; clones/updates the notebooks repository; restores project backups | you change what the LCA Notebooks shortcut or the material steps do |
+| `launcher/launcher.py` | Shipped into the env: starts JupyterLab in the right folder with only the toolkit kernel; clones/updates the external-resources repository; restores project backups | you change what the LCA Notebooks shortcut or the material steps do |
 | `launcher/jupyterlab_overrides.json` | Shipped as JupyterLab's `overrides.json`: default settings (auto-start the kernel) | you want other JupyterLab defaults |
-| `installer/windows_material_pages.nsi`, `installer/macos_material_dialogs.sh`, `installer/linux_material_prompts.sh` | Installer steps "download notebooks from a git repository" + project restore | you change those dialogs |
+| `installer/windows_material_pages.nsi`, `installer/macos_material_dialogs.sh`, `installer/linux_material_prompts.sh` | Installer steps "add external resources from a git repository" + project restore | you change those dialogs |
 | `tools/run_constructor.py`, `installer/macos_checks_before_install.sh` | constructor with our patches: replace an existing installation instead of refusing (see *Updating installations*) | you change the update behaviour, or constructor changes the patched code |
 | `tests/test_launcher.py` | Tests the launcher's material + restore steps in an installed env | — |
 | `recipe/shortcuts/recipe.yaml` | rattler-build recipe for the tiny `lca-toolkit-shortcuts` conda package that carries `menu.json` and the icons | you rename the shortcut package; bump its version whenever `menu.json` or an icon changes |
@@ -271,7 +272,7 @@ pixi.toml ──pixi lock──▶ pixi.lock
    - downloads each locked PyPI wheel and checks it against the lock's sha256;
    - writes a `post_install` script that runs
      `pip install --no-index --no-deps -r requirements.txt` against the bundled wheels and
-     then deletes them (plus the notebooks dialogs on macOS / prompts on Linux);
+     then deletes them (plus the external-resources dialogs on macOS / prompts on Linux);
    - writes a macOS `pre_install` script that removes old shortcut apps (see *Shortcuts*);
    - adds `launcher.py` and the JupyterLab defaults as `extra_files`;
    - renders `build/<platform>/construct.yaml` and runs
@@ -362,20 +363,20 @@ PyPI like `osx-64`.
 
 ---
 
-## Notebooks step
+## Additional resources step
 
-At the end of every installation, users can download notebooks from **any git
-repository** and restore a Brightway project backup. Nothing course-specific is built
+At the end of every installation, users can add external resources (teaching material,
+tutorials, the files of a study, …) from **any git repository** and restore a Brightway project backup. Nothing course-specific is built
 into the installer:
 
-1. "Download notebooks from a git repository?" with a **free text field** for the link,
+1. "Do you want to add external resources from a git repository?" with a **free text field** for the link,
    prefilled with `SUGGESTED_MATERIAL_URL` in `tools/make_installer.py`
    ([Brightway from the ground up](https://github.com/brightway-lca/from-the-ground-up)),
    and a folder choice (default **Documents**). For a course, give students a link to
    paste, e.g. a read-only GitLab/GitHub token URL
    `https://name:token@git.example.org/course/material.git`. The repository is cloned into
    `<folder>/<repository name>`, and JupyterLab then opens there instead of `LCA-Notebooks`.
-2. Only if they downloaded notebooks: "Do you already have the project backup
+2. Only if they downloaded something in step 1: "Do you already have the project backup
    (`.tar.gz`)?" If they pick the file, it is restored with
    `bw2io.backup.restore_project_directory`, so the project is directly available in
    Activity Browser and JupyterLab. If a project with that name exists, users are asked
@@ -534,7 +535,7 @@ If you changed `menu.json`, an icon or `recipe.yaml`, bump `context.version` in
 `recipe/shortcuts/recipe.yaml` (or delete `build/channel`) so the shortcut package is
 rebuilt.
 
-To prefill a different repository in the notebooks step (see *Notebooks step*):
+To prefill a different repository in the additional resources step (see *Additional resources step*):
 
 ```bash
 MATERIAL_SUGGESTED_URL="https://github.com/org/repo.git" pixi run -e build installer
@@ -569,7 +570,7 @@ bash build/linux-64/installer/*.sh -b -p ~/lca-toolkit     # -b: batch mode, no 
 ~/lca-toolkit/bin/python tests/test_launcher.py
 ```
 
-These silent/command-line installs skip the notebooks questions. To try those,
+These silent/command-line installs skip the external-resources questions. To try those,
 double-click the installer instead (Linux: run it without `-b`).
 
 ---

@@ -2,7 +2,7 @@
 # tools/make_installer.py fills in the suggested repository (SUGGESTED_MATERIAL_URL).
 # Inserted as-is after the install step, before the finish page.
 #
-# Page 1: optionally download notebooks from a git repository (any link the user pastes,
+# Page 1: optionally add external resources from a git repository (any link the user pastes,
 #         e.g. course material with an access token; prefilled with an example) into a
 #         folder of the user's choice.
 # Page 2 (only if page 1 was used): restore a Brightway project backup (.tar.gz) with bw2io.
@@ -24,23 +24,23 @@ Function MaterialPageShow
     ${If} $0 == error
         Abort
     ${EndIf}
-    !insertmacro MUI_HEADER_TEXT "Notebooks" "Optionally download notebooks or course material"
+    !insertmacro MUI_HEADER_TEXT "Additional resources" "Optionally add external resources from a git repository"
     SetShellVarContext current  # $DOCUMENTS of the logged-in user, also for all-users installs
 
-    ${NSD_CreateLabel} 0 0 100% 20u "Download notebooks from a git repository, e.g. your course material (needs an internet connection). LCA Notebooks then opens in that folder."
+    ${NSD_CreateLabel} 0 0 100% 28u "Do you want to add external resources from a git repository, e.g. teaching material, tutorials or the files of a study? Needs an internet connection; LCA Notebooks then opens in that folder."
     Pop $0
-    ${NSD_CreateCheckbox} 0 24u 100% 12u "Download from this repository:"
+    ${NSD_CreateCheckbox} 0 30u 100% 12u "Download from this repository:"
     Pop $MaterialCheckbox
     ${NSD_Check} $MaterialCheckbox
-    ${NSD_CreateText} 0 38u 100% 13u "@MATERIAL_URL@"
+    ${NSD_CreateText} 0 44u 100% 13u "@MATERIAL_URL@"
     Pop $MaterialUrlText
-    ${NSD_CreateLabel} 0 53u 100% 10u "Paste the link you were given (it may contain an access token), or keep the example."
+    ${NSD_CreateLabel} 0 59u 100% 10u "Paste the link you were given (it may contain an access token), or keep the example."
     Pop $0
-    ${NSD_CreateLabel} 0 68u 100% 10u "Folder (a subfolder named like the repository is created inside it):"
+    ${NSD_CreateLabel} 0 73u 100% 10u "Folder (a subfolder named like the repository is created inside it):"
     Pop $0
-    ${NSD_CreateDirRequest} 0 80u 74% 13u "$DOCUMENTS"
+    ${NSD_CreateDirRequest} 0 85u 74% 13u "$DOCUMENTS"
     Pop $MaterialDirText
-    ${NSD_CreateBrowseButton} 76% 79u 24% 15u "Browse..."
+    ${NSD_CreateBrowseButton} 76% 84u 24% 15u "Browse..."
     Pop $0
     ${NSD_OnClick} $0 MaterialBrowse
     nsDialogs::Show
@@ -48,7 +48,7 @@ FunctionEnd
 
 Function MaterialBrowse
     ${NSD_GetText} $MaterialDirText $0
-    nsDialogs::SelectFolderDialog "Choose where to put the notebooks" $0
+    nsDialogs::SelectFolderDialog "Choose where to put the resources" $0
     Pop $0
     ${If} $0 != error
         ${NSD_SetText} $MaterialDirText $0
@@ -74,7 +74,7 @@ Function MaterialPageLeave
     Pop $0
     EnableWindow $2 1
     ${If} $0 != 0
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "The notebooks could not be downloaded. Check the link and your internet connection, and that the folder doesn't already contain other files.$\r$\n$\r$\nRetry, or Cancel to skip this step." IDRETRY retry
+        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "The resources could not be downloaded. Check the link and your internet connection, and that the folder doesn't already contain other files.$\r$\n$\r$\nRetry, or Cancel to skip this step." IDRETRY retry
         Return
         retry:
         Abort  # stay on the page

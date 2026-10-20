@@ -1,5 +1,5 @@
 
-# --- Optional notebooks (git repository) + project restore -------------------------------
+# --- Optional external resources (git repository) + project restore ---------------------
 # Appended to post_install.sh by tools/make_installer.py, which fills in the suggested
 # repository (SUGGESTED_MATERIAL_URL); users can paste any other link, e.g. course material
 # with a token.
@@ -17,9 +17,9 @@ ask() { local reply; printf "%s " "$1" > /dev/tty; read -r reply < /dev/tty; pri
 
 printf "\n" > /dev/tty
 url="@MATERIAL_URL@"
-printf "Optionally download notebooks from a git repository, e.g. your course material.\n" > /dev/tty
+printf "You can add external resources from a git repository, e.g. teaching material, tutorials or the files of a study.\n" > /dev/tty
 printf "LCA Notebooks then opens in that folder. Needs an internet connection.\n" > /dev/tty
-answer=$(ask "Download notebooks? [yes|no] (default: yes) >>>")
+answer=$(ask "Add external resources? [yes|no] (default: yes) >>>")
 [[ -z "$answer" || "$answer" =~ ^[Yy] ]] || exit 0
 while true; do
     reply=$(ask "Repository link (paste the link you were given, or press Enter for $url) >>>")

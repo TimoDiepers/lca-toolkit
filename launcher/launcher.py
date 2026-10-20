@@ -4,9 +4,9 @@ Used by the JupyterLab shortcut and by the installers' optional post-install ste
 
     python launcher.py lab [jupyter args...]       start JupyterLab in the right folder
     python launcher.py fetch-material --url URL --parent DIR
-                                                    clone a git repository (e.g. course material)
+                                                    clone a git repository (external resources)
                                                     into DIR/<repository name>
-    python launcher.py update-material              git pull the teaching material
+    python launcher.py update-material              git pull the downloaded repository
     python launcher.py restore-project FILE [--overwrite]
                                                     restore a Brightway project backup (.tar.gz)
 
@@ -91,7 +91,7 @@ def fetch_material(url: str, parent: Path, branch: str | None = None) -> int:
         return 1
     dest = parent.expanduser() / name
     if (dest / ".git").is_dir():
-        print(f"Teaching material already present in {dest}")
+        print(f"Already downloaded: {dest}")
     elif dest.exists() and any(dest.iterdir()):
         print(f"{dest} exists and is not empty; choose another folder.", file=sys.stderr)
         return 1
@@ -101,14 +101,14 @@ def fetch_material(url: str, parent: Path, branch: str | None = None) -> int:
         if rc:
             return rc
     save_config(material_dir=str(dest))
-    print(f"Material in {dest}")
+    print(f"Downloaded to {dest}")
     return 0
 
 
 def update_material() -> int:
     target = load_config().get("material_dir")
     if not target or not (Path(target) / ".git").is_dir():
-        print("No teaching material installed.", file=sys.stderr)
+        print("No repository downloaded yet.", file=sys.stderr)
         return 1
     # --ff-only: never merge into (or overwrite) the user's own edits
     return run_git("-C", target, "pull", "--ff-only")

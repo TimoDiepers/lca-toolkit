@@ -1,9 +1,10 @@
 
-# --- Optional teaching material + project restore ---------------------------------------
-# Appended to post_install.sh by tools/make_installer.py when MATERIAL_GIT_URL is set
-# (@MATERIAL_NAME@ is replaced). macOS .pkg installers can't have custom pages without a
-# compiled Installer plug-in, so this asks with AppleScript dialogs, the same way
-# constructor's own scripts show alerts. pkg scripts run as root; git/bw2io run as the
+# --- Optional notebooks (git repository) + project restore -------------------------------
+# Appended to post_install.sh by tools/make_installer.py, which fills in the suggested
+# repository (SUGGESTED_MATERIAL_URL); users can paste any other link, e.g. course material
+# with a token.
+# macOS .pkg installers can't have custom pages without a compiled Installer plug-in, so this
+# asks with AppleScript dialogs, the same way constructor's own scripts show alerts. pkg scripts run as root; git/bw2io run as the
 # logged-in user so files and Brightway projects end up owned by (and visible to) them.
 set +e
 [[ "${INSTALLER_UNATTENDED:-0}" == "1" ]] && exit 0
@@ -18,12 +19,17 @@ as_user() { sudo -H -u "$user" "$@"; }
 # Errors (incl. "User canceled") go to /var/log/install.log.
 ask() { launchctl asuser "$uid" sudo -H -u "$user" osascript -e "activate" -e "$1"; }
 
-answer=$(ask 'button returned of (display dialog "Also download the @MATERIAL_NAME@ teaching material? This needs an internet connection. JupyterLab will then open in this folder." buttons {"Skip", "Download"} default button "Download" with title "@MATERIAL_NAME@")')
-[[ "$answer" == "Download" ]] || exit 0
+url="@MATERIAL_URL@"
 while true; do
-    parent=$(ask "POSIX path of (choose folder with prompt \"Choose where to put the @MATERIAL_NAME@ folder:\" default location POSIX file \"$home/Documents\")") || exit 0
-    as_user "${launcher[@]}" fetch-material --parent "$parent" && break
-    retry=$(ask 'button returned of (display dialog "The @MATERIAL_NAME@ material could not be downloaded (no internet connection, or the folder already contains other files)." buttons {"Skip", "Try again"} default button "Try again" with icon caution)')
+    # The text field is prefilled with the example (or the link from a previous attempt).
+    reply=$(ask "set r to display dialog \"Download notebooks from a git repository, e.g. your course material? Paste the link you were given (it may contain an access token), or keep the example. Needs an internet connection; LCA Notebooks then opens in that folder.\" default answer \"$url\" buttons {\"Skip\", \"Download\"} default button \"Download\" with title \"Notebooks\"
+if button returned of r is \"Download\" then return text returned of r
+return \"\"") || exit 0
+    [[ -n "$reply" ]] || exit 0
+    url=$reply
+    parent=$(ask "POSIX path of (choose folder with prompt \"Choose where to put the notebooks (a subfolder named like the repository is created):\" default location POSIX file \"$home/Documents\")") || exit 0
+    as_user "${launcher[@]}" fetch-material --url "$url" --parent "$parent" && break
+    retry=$(ask 'button returned of (display dialog "The notebooks could not be downloaded. Check the link and your internet connection, and that the folder does not already contain other files." buttons {"Skip", "Try again"} default button "Try again" with icon caution)')
     [[ "$retry" == "Try again" ]] || exit 0
 done
 

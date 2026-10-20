@@ -58,11 +58,6 @@ jobs:
 
       - name: Build installer
         run: pixi run -e build installer
-        env:
-          # Optional: git URL of teaching material to offer during installation (see README).
-          MATERIAL_GIT_URL: ${{ secrets.MATERIAL_GIT_URL }}
-          MATERIAL_NAME: ${{ vars.MATERIAL_NAME }}
-          MATERIAL_BRANCH: ${{ vars.MATERIAL_BRANCH }}
 
       - name: Install and smoke-test (macOS)
         if: runner.os == 'macOS'

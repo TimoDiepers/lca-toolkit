@@ -1,12 +1,15 @@
-# Optional post-install pages for the Windows installer (constructor `post_install_pages`).
-# Only included when the installer is built with MATERIAL_GIT_URL set; tools/make_installer.py
-# replaces @MATERIAL_NAME@. Inserted as-is after the install step, before the finish page.
+# Post-install pages for the Windows installer (constructor `post_install_pages`).
+# tools/make_installer.py fills in the suggested repository (SUGGESTED_MATERIAL_URL).
+# Inserted as-is after the install step, before the finish page.
 #
-# Page 1: download the teaching material (git clone) into a folder of the user's choice.
+# Page 1: optionally download notebooks from a git repository (any link the user pastes,
+#         e.g. course material with an access token; prefilled with an example) into a
+#         folder of the user's choice.
 # Page 2 (only if page 1 was used): restore a Brightway project backup (.tar.gz) with bw2io.
 # Silent installs (/S) skip custom pages, so neither step runs there.
 
 Var MaterialCheckbox
+Var MaterialUrlText
 Var MaterialDirText
 Var MaterialWanted
 Var ProjectCheckbox
@@ -21,19 +24,23 @@ Function MaterialPageShow
     ${If} $0 == error
         Abort
     ${EndIf}
-    !insertmacro MUI_HEADER_TEXT "@MATERIAL_NAME@ material" "Optionally download the teaching material"
+    !insertmacro MUI_HEADER_TEXT "Notebooks" "Optionally download notebooks or course material"
     SetShellVarContext current  # $DOCUMENTS of the logged-in user, also for all-users installs
 
-    ${NSD_CreateLabel} 0 0 100% 24u "Download the @MATERIAL_NAME@ notebooks and files now (needs an internet connection). JupyterLab will open in this folder."
+    ${NSD_CreateLabel} 0 0 100% 20u "Download notebooks from a git repository, e.g. your course material (needs an internet connection). LCA Notebooks then opens in that folder."
     Pop $0
-    ${NSD_CreateCheckbox} 0 30u 100% 12u "Download the @MATERIAL_NAME@ material"
+    ${NSD_CreateCheckbox} 0 24u 100% 12u "Download from this repository:"
     Pop $MaterialCheckbox
     ${NSD_Check} $MaterialCheckbox
-    ${NSD_CreateLabel} 0 50u 100% 10u "Folder (a subfolder $\"@MATERIAL_NAME@$\" is created inside it):"
+    ${NSD_CreateText} 0 38u 100% 13u "@MATERIAL_URL@"
+    Pop $MaterialUrlText
+    ${NSD_CreateLabel} 0 53u 100% 10u "Paste the link you were given (it may contain an access token), or keep the example."
     Pop $0
-    ${NSD_CreateDirRequest} 0 62u 74% 13u "$DOCUMENTS"
+    ${NSD_CreateLabel} 0 68u 100% 10u "Folder (a subfolder named like the repository is created inside it):"
+    Pop $0
+    ${NSD_CreateDirRequest} 0 80u 74% 13u "$DOCUMENTS"
     Pop $MaterialDirText
-    ${NSD_CreateBrowseButton} 76% 61u 24% 15u "Browse..."
+    ${NSD_CreateBrowseButton} 76% 79u 24% 15u "Browse..."
     Pop $0
     ${NSD_OnClick} $0 MaterialBrowse
     nsDialogs::Show
@@ -41,7 +48,7 @@ FunctionEnd
 
 Function MaterialBrowse
     ${NSD_GetText} $MaterialDirText $0
-    nsDialogs::SelectFolderDialog "Choose where to put the @MATERIAL_NAME@ folder" $0
+    nsDialogs::SelectFolderDialog "Choose where to put the notebooks" $0
     Pop $0
     ${If} $0 != error
         ${NSD_SetText} $MaterialDirText $0
@@ -54,14 +61,20 @@ Function MaterialPageLeave
     ${If} $0 != ${BST_CHECKED}
         Return
     ${EndIf}
+    ${NSD_GetText} $MaterialUrlText $3
+    ${If} $3 == ""
+        MessageBox MB_OK|MB_ICONEXCLAMATION "Please paste a repository link, or untick the box."
+        Abort
+    ${EndIf}
     ${NSD_GetText} $MaterialDirText $1
     GetDlgItem $2 $HWNDPARENT 1
     EnableWindow $2 0
-    nsExec::ExecToLog '"$INSTDIR\python.exe" "$INSTDIR\share\lca-toolkit\launcher.py" fetch-material --parent "$1"'
+    # nsExec logs the program's output, not the command line, so a token in $3 stays out of the log
+    nsExec::ExecToLog '"$INSTDIR\python.exe" "$INSTDIR\share\lca-toolkit\launcher.py" fetch-material --url "$3" --parent "$1"'
     Pop $0
     EnableWindow $2 1
     ${If} $0 != 0
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "The @MATERIAL_NAME@ material could not be downloaded (no internet connection, or the folder already contains other files).$\r$\n$\r$\nRetry, or Cancel to skip this step." IDRETRY retry
+        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "The notebooks could not be downloaded. Check the link and your internet connection, and that the folder doesn't already contain other files.$\r$\n$\r$\nRetry, or Cancel to skip this step." IDRETRY retry
         Return
         retry:
         Abort  # stay on the page

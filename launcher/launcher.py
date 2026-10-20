@@ -3,17 +3,19 @@
 Used by the JupyterLab shortcut and by the installers' optional post-install steps:
 
     python launcher.py lab [jupyter args...]       start JupyterLab in the right folder
-    python launcher.py fetch-material --parent DIR  clone the teaching material into DIR/<name>
+    python launcher.py fetch-material --url URL --parent DIR
+                                                    clone a git repository (e.g. course material)
+                                                    into DIR/<repository name>
     python launcher.py update-material              git pull the teaching material
     python launcher.py restore-project FILE [--overwrite]
                                                     restore a Brightway project backup (.tar.gz)
 
 Exit codes: 0 ok, 1 error, 3 project already exists (rerun with --overwrite).
 
-The teaching material is optional and configured at build time: share/lca-toolkit/material.json
-({"url": ..., "name": ..., "branch": ...}) only exists if the installer was built with
-MATERIAL_GIT_URL set. Where a user put the material is stored per user in config.json
-(see config_path()).
+The material is any git repository the user names during installation (the installers
+suggest a default, see tools/make_installer.py). Its URL may contain an access token, so it
+is never printed. Where a user put the material is stored per user in config.json (see
+config_path()); JupyterLab then opens there.
 """
 
 from __future__ import annotations
@@ -25,10 +27,9 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 PREFIX = Path(sys.prefix)
-SHARE = PREFIX / "share" / "lca-toolkit"
-MATERIAL_FILE = SHARE / "material.json"
 DEFAULT_NOTEBOOK_DIR = Path.home() / "LCA-Notebooks"
 EXIT_PROJECT_EXISTS = 3
 
@@ -57,13 +58,6 @@ def save_config(**values) -> None:
     path.write_text(json.dumps(cfg, indent=2))
 
 
-def material() -> dict | None:
-    try:
-        return json.loads(MATERIAL_FILE.read_text())
-    except (OSError, ValueError):
-        return None
-
-
 def git_exe() -> str:
     candidates = [PREFIX / "Library" / "bin" / "git.exe", PREFIX / "Library" / "cmd" / "git.exe", PREFIX / "bin" / "git"]
     for c in candidates:
@@ -83,12 +77,19 @@ def run_git(*args: str) -> int:
     return subprocess.run([git_exe(), "-c", "credential.helper=", *args], env=env).returncode
 
 
-def fetch_material(parent: Path) -> int:
-    info = material()
-    if info is None:
-        print("This installer was built without teaching material.", file=sys.stderr)
+def repo_name(url: str) -> str:
+    """Folder name for a clone: the last path part of the URL, without .git (as git does)."""
+    path = urlsplit(url).path if "://" in url else url.rsplit(":", 1)[-1]
+    return path.rstrip("/").rsplit("/", 1)[-1].removesuffix(".git")
+
+
+def fetch_material(url: str, parent: Path, branch: str | None = None) -> int:
+    url = url.strip()
+    name = repo_name(url)
+    if not name:
+        print("That doesn't look like a git repository link.", file=sys.stderr)
         return 1
-    dest = parent.expanduser() / info["name"]
+    dest = parent.expanduser() / name
     if (dest / ".git").is_dir():
         print(f"Teaching material already present in {dest}")
     elif dest.exists() and any(dest.iterdir()):
@@ -96,12 +97,11 @@ def fetch_material(parent: Path) -> int:
         return 1
     else:
         dest.parent.mkdir(parents=True, exist_ok=True)
-        branch = ["--branch", info["branch"]] if info.get("branch") else []
-        rc = run_git("clone", *branch, info["url"], str(dest))
+        rc = run_git("clone", *(["--branch", branch] if branch else []), url, str(dest))
         if rc:
             return rc
     save_config(material_dir=str(dest))
-    print(f"Teaching material in {dest}")
+    print(f"Material in {dest}")
     return 0
 
 
@@ -147,7 +147,9 @@ def main() -> int:
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("lab")
     fetch = sub.add_parser("fetch-material")
+    fetch.add_argument("--url", required=True, help="git URL; may contain an access token")
     fetch.add_argument("--parent", type=Path, required=True)
+    fetch.add_argument("--branch")
     sub.add_parser("update-material")
     restore = sub.add_parser("restore-project")
     restore.add_argument("archive", type=Path)
@@ -159,7 +161,7 @@ def main() -> int:
     if extra:
         parser.error(f"unrecognized arguments: {' '.join(extra)}")
     if args.cmd == "fetch-material":
-        return fetch_material(args.parent)
+        return fetch_material(args.url, args.parent, args.branch)
     if args.cmd == "update-material":
         return update_material()
     return restore_project(args.archive, args.overwrite)

@@ -1,8 +1,9 @@
 
-# --- Optional teaching material + project restore ---------------------------------------
-# Appended to post_install.sh by tools/make_installer.py when MATERIAL_GIT_URL is set
-# (@MATERIAL_NAME@ is replaced). The Linux installer is a shell script that runs in a
-# terminal, so this asks there. Batch installs (-b) skip it. If the installer runs with sudo,
+# --- Optional notebooks (git repository) + project restore -------------------------------
+# Appended to post_install.sh by tools/make_installer.py, which fills in the suggested
+# repository (SUGGESTED_MATERIAL_URL); users can paste any other link, e.g. course material
+# with a token.
+# The Linux installer is a shell script that runs in a terminal, so this asks there. Batch installs (-b) skip it. If the installer runs with sudo,
 # git/bw2io run as the user who called sudo, so files and projects belong to them.
 set +e
 [[ "${INSTALLER_UNATTENDED:-0}" == "1" ]] && exit 0
@@ -15,14 +16,19 @@ as_user() { if [[ $(id -u) == 0 && -n "${SUDO_USER:-}" ]]; then sudo -H -u "$SUD
 ask() { local reply; printf "%s " "$1" > /dev/tty; read -r reply < /dev/tty; printf "%s" "$reply"; }
 
 printf "\n" > /dev/tty
-answer=$(ask "Also download the @MATERIAL_NAME@ teaching material? Needs internet. [yes|no] (default: yes) >>>")
+url="@MATERIAL_URL@"
+printf "Optionally download notebooks from a git repository, e.g. your course material.\n" > /dev/tty
+printf "LCA Notebooks then opens in that folder. Needs an internet connection.\n" > /dev/tty
+answer=$(ask "Download notebooks? [yes|no] (default: yes) >>>")
 [[ -z "$answer" || "$answer" =~ ^[Yy] ]] || exit 0
 while true; do
-    parent=$(ask "Folder to put the @MATERIAL_NAME@ folder in [$home/Documents] >>>")
+    reply=$(ask "Repository link (paste the link you were given, or press Enter for $url) >>>")
+    url=${reply:-$url}
+    parent=$(ask "Folder to put it in (a subfolder named like the repository is created) [$home/Documents] >>>")
     parent=${parent:-$home/Documents}
     parent=${parent/#\~/$home}
-    as_user "${launcher[@]}" fetch-material --parent "$parent" && break
-    retry=$(ask "Download failed (no internet connection, or the folder already contains other files). Try again? [yes|no] (default: yes) >>>")
+    as_user "${launcher[@]}" fetch-material --url "$url" --parent "$parent" && break
+    retry=$(ask "Download failed (check the link and your internet connection, and that the folder has no other files). Try again? [yes|no] (default: yes) >>>")
     [[ -z "$retry" || "$retry" =~ ^[Yy] ]] || exit 0
 done
 

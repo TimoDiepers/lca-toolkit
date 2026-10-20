@@ -7,17 +7,14 @@ Single-click installers for [Brightway](https://docs.brightway.dev)-based life c
     <td align="center" width="50%">
       <img src="recipe/shortcuts/icons/lca-notebooks.svg" width="72" alt=""><br>
       <b>LCA Notebooks</b><br>
-      Brightway as code in Python notebooks<br><br>
-      <sub>Bundles <a href="https://jupyter.org">JupyterLab</a> and
-      <a href="https://docs.brightway.dev">Brightway 2.5</a>
-      (bw2data, bw2calc, bw2io, bw2analyzer), matplotlib, ipywidgets</sub>
+      Brightway as Code in Python Jupyter Notebooks<br><br>
+      <sub>Bundles <a href="https://jupyter.org">JupyterLab</a> & <a href="https://docs.brightway.dev">Brightway 2.5</a></sub>
     </td>
     <td align="center" width="50%">
       <img src="recipe/shortcuts/icons/lca-browser.svg" width="72" alt=""><br>
       <b>LCA Browser</b><br>
-      Point-and-click LCA, no code needed<br><br>
-      <sub>Bundles <a href="https://github.com/LCA-ActivityBrowser/activity-browser">Activity Browser</a>
-      3 (beta), the graphical user interface for Brightway</sub>
+      Point-and-click LCA in a Graphical User Interface<br><br>
+      <sub>Bundles <a href="https://github.com/LCA-ActivityBrowser/activity-browser">Activity Browser</a>3 (beta)</sub>
     </td>
   </tr>
 </table>

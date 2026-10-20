@@ -525,9 +525,9 @@ pixi run -e build python tools/make_installer.py --platform win-64 --no-build
 # inspect build/win-64/construct.yaml, post_install.bat, requirements.txt
 ```
 
-If you changed `menu.json`, an icon or `recipe.yaml`, bump `context.version` in
-`recipe/shortcuts/recipe.yaml` (or delete `build/channel`) so the shortcut package is
-rebuilt.
+The shortcut package is rebuilt from scratch for every build (`build/channel` is deleted
+first, and its stale copy is dropped from constructor's download cache), so changes to
+`menu.json`, the icons or `recipe.yaml` are always picked up.
 
 To prefill a different repository in the additional resources step (see *Additional resources step*):
 

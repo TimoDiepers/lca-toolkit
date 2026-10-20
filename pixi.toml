@@ -64,7 +64,9 @@ cairosvg = "*"  # tools/make_icons.py
 pillow = "*"
 
 [feature.build.tasks]
-build-shortcuts = "rattler-build build --recipe recipe/shortcuts --output-dir build/channel"
+# Rebuilt from scratch every time: rattler-build overwrites the package but keeps a stale
+# checksum in the channel index, which breaks the installer.
+build-shortcuts = "rm -rf build/channel && rattler-build build --recipe recipe/shortcuts --output-dir build/channel"
 installer = { cmd = "python tools/make_installer.py", depends-on = ["build-shortcuts"] }
 icons = "python tools/make_icons.py"  # after editing recipe/shortcuts/icons/*.svg; commit the output
 

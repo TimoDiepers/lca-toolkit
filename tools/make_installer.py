@@ -105,6 +105,16 @@ def download_wheels(pypi: list[dict], dest: Path) -> list[Path]:
     return wheels
 
 
+def clear_cached_shortcuts(plat: str) -> None:
+    # The shortcut package is rebuilt for every build under the same file name, but with
+    # different bytes (timestamps). constructor would reuse a stale copy from its download
+    # cache while recording the new checksum; the installer then can't find a matching
+    # package and tries to fetch it (Windows: "PathNotFoundError: D:\\a\\..."). Drop it first.
+    cache = Path(os.environ.get("CONSTRUCTOR_CACHE", "~/.conda/constructor")).expanduser() / plat
+    for path in cache.glob(f"{SHORTCUTS_PACKAGE}-*"):
+        shutil.rmtree(path) if path.is_dir() else path.unlink()
+
+
 def suggested_material_url() -> str:
     url = os.environ.get("MATERIAL_SUGGESTED_URL", "").strip() or SUGGESTED_MATERIAL_URL
     if "@" in url.split("://", 1)[-1].split("/", 1)[0]:
@@ -266,6 +276,7 @@ def main() -> None:
     )
 
     if not args.no_build:
+        clear_cached_shortcuts(args.platform)
         # run_constructor.py = constructor + our "replace an existing installation" patches
         subprocess.run(
             [sys.executable, str(ROOT / "tools" / "run_constructor.py"), str(out),

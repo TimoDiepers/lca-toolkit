@@ -175,6 +175,10 @@ def construct_yaml(
         "version": version,
         "company": COMPANY,
         "channels": [SHORTCUTS_CHANNEL.as_uri(), "conda-forge"],
+        # The shortcut package comes from a local channel on the build machine. Without this,
+        # the installer records its file:// URL and, on Windows, tries to read the package
+        # from that (non-existent) path on the user's machine ("PathNotFoundError: D:\a\...").
+        "channels_remap": [{"src": SHORTCUTS_CHANNEL.as_uri(), "dest": "https://conda.anaconda.org/lca-toolkit"}],
         "specs": specs + [SHORTCUTS_PACKAGE],
         "menu_packages": [SHORTCUTS_PACKAGE],
         "extra_files": extra_files,

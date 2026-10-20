@@ -59,6 +59,12 @@ jobs:
       - name: Build installer
         run: pixi run -e build installer
 
+      # Users don't have the build machine's local shortcut channel, so the installer must not
+      # need it. Remove it before testing (this hid a "PathNotFoundError" on Windows in 0.2.0).
+      - name: Remove build-machine-only files before testing
+        shell: bash
+        run: rm -rf build/channel
+
       - name: Install and smoke-test (macOS)
         if: runner.os == 'macOS'
         run: |

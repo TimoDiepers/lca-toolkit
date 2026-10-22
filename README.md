@@ -29,8 +29,8 @@ project you create in one shows up in the other.
 | Your computer | Download |
 |---|---|
 | **Windows** 10 or 11 (64-bit) | [**LCA-Toolkit-Windows-x86_64.exe**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Windows-x86_64.exe) |
-| **Mac with Apple Silicon** (M1, M2, M3, M4, …), macOS 13 or newer | [**LCA-Toolkit-macOS-arm64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-arm64.pkg) |
-| **Mac with Intel processor**, macOS 12 or newer | [**LCA-Toolkit-macOS-x86_64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-x86_64.pkg) |
+| **Mac with Apple Silicon** (M1, M2, M3, M4, …), macOS 13 Ventura or newer | [**LCA-Toolkit-macOS-arm64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-arm64.pkg) |
+| **Mac with Intel processor**, macOS 12 Monterey or newer (also 13, 14, 15, 26) | [**LCA-Toolkit-macOS-x86_64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-x86_64.pkg) |
 | **Linux** (64-bit, e.g. Ubuntu 22.04 or newer) | [**LCA-Toolkit-Linux-x86_64.sh**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Linux-x86_64.sh) |
 
 Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releases).
@@ -39,7 +39,9 @@ Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releas
 - The installation itself works offline. Downloading notebooks (optional, see
   [below](#additional-resources-and-project-backup)) needs internet.
 - **Which Mac do I have?** Apple menu → *About This Mac*: "Chip: Apple M…" means Apple
-  Silicon, "Processor: … Intel …" means Intel.
+  Silicon, "Processor: … Intel …" means Intel. The same window shows your macOS version.
+- **Intel Macs on macOS 11 Big Sur or older** are not supported. If your Mac can't be
+  updated to macOS 12, use a newer computer or a university lab machine.
 
 ## Installing on Windows
 

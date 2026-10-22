@@ -129,10 +129,33 @@ def restore_project(archive: Path, overwrite: bool) -> int:
     return 0
 
 
+def wait_for_macos_folder_access(folder: Path) -> None:
+    """macOS protects Desktop, Documents and Downloads. LCA Notebooks runs in Terminal, so
+    unless Terminal may read the folder, JupyterLab starts but shows it empty. Explain, open
+    the right System Settings page and retry until access works (or the user skips)."""
+    while True:
+        try:
+            os.listdir(folder)
+            return
+        except PermissionError:
+            pass
+        print(
+            f"\nmacOS does not allow Terminal to read {folder}.\n"
+            "In System Settings > Privacy & Security > Files & Folders > Terminal, turn on the\n"
+            "switch for that folder (Desktop, Documents or Downloads). Opening the settings now.\n"
+        )
+        subprocess.run(["open", "x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"])
+        answer = input("Press Enter to try again, or type s and Enter to start anyway: ")
+        if answer.strip().lower().startswith("s"):
+            return
+
+
 def lab(extra: list[str]) -> int:
     target = load_config().get("material_dir")
     notebook_dir = Path(target) if target and Path(target).is_dir() else DEFAULT_NOTEBOOK_DIR
     notebook_dir.mkdir(parents=True, exist_ok=True)
+    if sys.platform == "darwin":
+        wait_for_macos_folder_access(notebook_dir)
     args = [
         f"--ServerApp.root_dir={notebook_dir}",
         # only this environment's kernel: hides kernels from other Python setups in

@@ -103,7 +103,7 @@ At the end of the installation you're asked:
    tutorials or the files of a study. The link field is prefilled with
    [Brightway from the ground up](https://github.com/brightway-lca/from-the-ground-up), an
    introduction to Brightway. If you were given a link, paste it there instead. Then
-   choose a folder (default: *Documents*). The repository is downloaded into a subfolder
+   choose a folder (default: *Documents*; on macOS your home folder). The repository is downloaded into a subfolder
    named like it, and LCA Notebooks then always opens there.
 2. **Do you already have the project backup (`.tar.gz`)?** Only asked if you downloaded
    something in step 1. If you were given one, choose the file. It is restored so the project is
@@ -151,6 +151,12 @@ those too, delete:
 | Settings | `%APPDATA%\lca-toolkit` | `~/Library/Application Support/lca-toolkit` | `~/.config/lca-toolkit` |
 
 ## Troubleshooting
+
+- **macOS: LCA Notebooks shows an empty file list** (or the terminal says *Operation not
+  permitted*). The folder is on your Desktop or in Documents/Downloads, which macOS protects.
+  Open System Settings → Privacy & Security → **Files & Folders** → **Terminal**, turn on
+  the switch for that folder, quit Terminal (⌘Q) and start LCA Notebooks again. LCA
+  Notebooks detects this, opens that settings page and waits until access works.
 
 - **macOS: nothing happens / "blocked" when opening the installer.** Use *Open Anyway*
   in System Settings → Privacy & Security (step 2 above).
@@ -366,7 +372,7 @@ into the installer:
 1. "Do you want to add external resources from a git repository?" with a **free text field** for the link,
    prefilled with `SUGGESTED_MATERIAL_URL` in `tools/make_installer.py`
    ([Brightway from the ground up](https://github.com/brightway-lca/from-the-ground-up)),
-   and a folder choice (default **Documents**). For a course, give students a link to
+   and a folder choice (default **Documents**; on macOS the home folder, because Desktop, Documents and Downloads are privacy-protected there and LCA Notebooks runs in Terminal). For a course, give students a link to
    paste, e.g. a read-only GitLab/GitHub token URL
    `https://name:token@git.example.org/course/material.git`. The repository is cloned into
    `<folder>/<repository name>`, and JupyterLab then opens there instead of `LCA-Notebooks`.

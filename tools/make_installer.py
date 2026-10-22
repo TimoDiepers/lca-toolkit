@@ -219,6 +219,9 @@ def construct_yaml(
         }
     else:
         arch = "arm64" if plat == "osx-arm64" else "x86_64"
+        if plat == "osx-64":
+            # PySide6 wheels (<6.10) need macOS 12; macOS Installer refuses older systems cleanly
+            cfg["virtual_specs"] = ["__osx>=12"]
         cfg |= {
             "installer_type": "pkg",
             "installer_filename": f"{NAME}-{version}-macOS-{arch}.pkg",

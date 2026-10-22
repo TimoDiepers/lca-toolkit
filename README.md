@@ -30,7 +30,7 @@ project you create in one shows up in the other.
 |---|---|
 | **Windows** 10 or 11 (64-bit) | [**LCA-Toolkit-Windows-x86_64.exe**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Windows-x86_64.exe) |
 | **Mac with Apple Silicon** (M1, M2, M3, M4, …), macOS 13 or newer | [**LCA-Toolkit-macOS-arm64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-arm64.pkg) |
-| **Mac with Intel processor**, macOS 13 or newer | [**LCA-Toolkit-macOS-x86_64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-x86_64.pkg) |
+| **Mac with Intel processor**, macOS 12 or newer | [**LCA-Toolkit-macOS-x86_64.pkg**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-macOS-x86_64.pkg) |
 | **Linux** (64-bit, e.g. Ubuntu 22.04 or newer) | [**LCA-Toolkit-Linux-x86_64.sh**](https://github.com/TimoDiepers/lca-toolkit/releases/latest/download/LCA-Toolkit-Linux-x86_64.sh) |
 
 Older versions: [all releases](https://github.com/TimoDiepers/lca-toolkit/releases).
@@ -192,7 +192,8 @@ Everything below is about building and changing the installers.
 
 Activity Browser needs Qt WebEngine. conda-forge has no `qt6-webengine` for `osx-64`, so on
 Intel Macs PySide6 comes from PyPI: its universal2 wheels bundle their own Qt including
-WebEngine (macOS 13+). That's also why `matplotlib-base` is used instead of `matplotlib`,
+WebEngine. It is pinned below 6.10, because 6.10+ wheels need macOS 13 while 6.9 runs on
+macOS 12 Monterey (the conda-forge packages need macOS 11). That's also why `matplotlib-base` is used instead of `matplotlib`,
 which would pull in a second Qt from conda-forge.
 
 ## What gets installed where

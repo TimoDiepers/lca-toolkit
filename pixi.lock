@@ -1297,9 +1297,9 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/df/80/fc9d01d5ed37ba4c42ca2b55b4339ae6e200b456be3a1aaddf4a9fa99b8c/pyperclip-1.11.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/dd/02/caf6305224b9432ea7373670d101392f620c1ce741d6f95458b1fb9a16a4/pyppmd-1.3.1-cp313-cp313-macosx_10_13_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/ab/b3/1f12ebc5009c65b607509393ad98240728b4401bc3593868fb161fdd3760/PyPrind-2.11.3-py2.py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/ae/b5/99ff75f604d69eda1c5d1fe85cc43fb697d95eabc30ba86af099c2ddcd96/pyside6-6.11.2-cp310-abi3-macosx_13_0_universal2.whl
-      - pypi: https://files.pythonhosted.org/packages/e3/91/339fe9f7c94163815004ccd6b5c58b926b2dfb4e51c3b5563d412eab151f/pyside6_addons-6.11.2-cp310-abi3-macosx_13_0_universal2.whl
-      - pypi: https://files.pythonhosted.org/packages/6f/16/0b7ecf89ebada82ed0430be33809ff325761ece83104f8635b1bd101fcd0/pyside6_essentials-6.11.2-cp310-abi3-macosx_13_0_universal2.whl
+      - pypi: https://files.pythonhosted.org/packages/fe/15/1fa71e44d3b345b9eca82d38cf7e6d7505168b978fe98b3610c0e25d8c0e/pyside6-6.9.3-cp39-abi3-macosx_12_0_universal2.whl
+      - pypi: https://files.pythonhosted.org/packages/23/56/714c55e4514ec6603be8126355baf416e507557a73e7fc76870e6f5c20b9/pyside6_addons-6.9.3-cp39-abi3-macosx_12_0_universal2.whl
+      - pypi: https://files.pythonhosted.org/packages/80/a9/51549844900837c70e5c89cbd840956c2533732ef4f05c2b656e35ca8182/pyside6_essentials-6.9.3-cp39-abi3-macosx_12_0_universal2.whl
       - pypi: https://files.pythonhosted.org/packages/60/d1/38f3a3405989a89ac18390803e70c6ad7c7760da4f9b83cbeca0c44a0c72/python_dotenv-1.2.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7e/92/345823838ae367c59b63e03aef9c331f485370f9df6d049256a61a28f06d/pyxlsb-1.0.10-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/69/76/37c0ccd5ab968a6a438f9c623aeecc84c202ab2fabc6a8fd927580c15b5a/QtPy-2.4.3-py3-none-any.whl
@@ -1308,7 +1308,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/a0/ad/4901a37256bc5027f3873ebd538b851349d7627d8aa2e91743c79b500f48/rapidfuzz-3.14.6-cp313-cp313-macosx_10_13_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/10/c2/6604a71269e0c1bd75656d5a001432d16f2cc5b8c057140ec797155c295e/rdflib-7.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/10/d9/1d2e123d88c388956c3ffd09de804043f3ec77a84e425e6b620d0c3f080b/salib-1.6.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/47/44/11bf71c36e71936ab4e923e5dd23599dab527c4488b01860b0f689ce9947/shiboken6-6.11.2-cp310-abi3-macosx_13_0_universal2.whl
+      - pypi: https://files.pythonhosted.org/packages/6b/ed/eac552326349629f8c3a89b57a754a860d9665aea78c172777395905d36b/shiboken6-6.9.3-cp39-abi3-macosx_12_0_universal2.whl
       - pypi: https://files.pythonhosted.org/packages/41/a4/ee0bdba1d1e98db21166381559d0061d752bbf66af2dd1cbbe4c2afdc4fa/snowflake_id-1.0.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/31/89/176e3db96e31e795d7dfd91dd67749d3d1f0316bb30c6931a6140e1a0477/SPARQLWrapper-2.0.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/81/be/4512d77bf83ed7f1a454f96f2bea80cecbe725b23e8f9186a6661abacf80/stats_arrays-3.0-py3-none-any.whl
@@ -12044,16 +12044,15 @@ packages:
   license_family: MIT
   size: 17061
   timestamp: 1791576869230
-- pypi: https://files.pythonhosted.org/packages/ae/b5/99ff75f604d69eda1c5d1fe85cc43fb697d95eabc30ba86af099c2ddcd96/pyside6-6.11.2-cp310-abi3-macosx_13_0_universal2.whl
+- pypi: https://files.pythonhosted.org/packages/fe/15/1fa71e44d3b345b9eca82d38cf7e6d7505168b978fe98b3610c0e25d8c0e/pyside6-6.9.3-cp39-abi3-macosx_12_0_universal2.whl
   name: pyside6
-  version: 6.11.2
-  sha256: 13a3c79816879d9743672a669f1988f74459a78f89a97a2624fae4fe059ffa3a
+  version: 6.9.3
+  sha256: 6fd9fbbc14e2a5707df611bfacbf3f71283c637b8a29b28708801eeb28bfcb69
   requires_dist:
-  - shiboken6==6.11.2
-  - pyside6-essentials==6.11.2
-  - pyside6-addons==6.11.2
-  - tomli>=2.0.1 ; python_full_version < '3.11'
-  requires_python: '>=3.10,<3.15'
+  - shiboken6==6.9.3
+  - pyside6-essentials==6.9.3
+  - pyside6-addons==6.9.3
+  requires_python: '>=3.9,<3.14'
 - conda: https://conda.anaconda.org/conda-forge/linux-64/pyside6-6.11.2-py313hd9d88b3_1.conda
   sha256: 428a6daef5ca7151ad0df1bffe9c865b58f7b76cbee2070189bcdbde3ac2ec7d
   md5: 8b19f5888eb8a8ec70b5f987bd4dc8cd
@@ -12123,21 +12122,21 @@ packages:
   - pkg:pypi/shiboken6?source=hash-mapping
   size: 11550080
   timestamp: 1788744997503
-- pypi: https://files.pythonhosted.org/packages/e3/91/339fe9f7c94163815004ccd6b5c58b926b2dfb4e51c3b5563d412eab151f/pyside6_addons-6.11.2-cp310-abi3-macosx_13_0_universal2.whl
+- pypi: https://files.pythonhosted.org/packages/23/56/714c55e4514ec6603be8126355baf416e507557a73e7fc76870e6f5c20b9/pyside6_addons-6.9.3-cp39-abi3-macosx_12_0_universal2.whl
   name: pyside6-addons
-  version: 6.11.2
-  sha256: 354c574a839f7d0751960ba03f33bec87c95e0f2796dca3287f54d03abe97dac
+  version: 6.9.3
+  sha256: 189c9a9a2fdaffa95e91731f5c0afdc47ba231f5f683d3f8977b22c233749ba4
   requires_dist:
-  - shiboken6==6.11.2
-  - pyside6-essentials==6.11.2
-  requires_python: '>=3.10,<3.15'
-- pypi: https://files.pythonhosted.org/packages/6f/16/0b7ecf89ebada82ed0430be33809ff325761ece83104f8635b1bd101fcd0/pyside6_essentials-6.11.2-cp310-abi3-macosx_13_0_universal2.whl
+  - shiboken6==6.9.3
+  - pyside6-essentials==6.9.3
+  requires_python: '>=3.9,<3.14'
+- pypi: https://files.pythonhosted.org/packages/80/a9/51549844900837c70e5c89cbd840956c2533732ef4f05c2b656e35ca8182/pyside6_essentials-6.9.3-cp39-abi3-macosx_12_0_universal2.whl
   name: pyside6-essentials
-  version: 6.11.2
-  sha256: 77795c145202e65a78d88f7cd409d186e3ba23d159bdb3ba2dcd159ae5e5f0d9
+  version: 6.9.3
+  sha256: ad3664ff0ced9f92ed7872e512c86328894d29f262e6c3400400232a36dda357
   requires_dist:
-  - shiboken6==6.11.2
-  requires_python: '>=3.10,<3.15'
+  - shiboken6==6.9.3
+  requires_python: '>=3.9,<3.14'
 - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyh09c184e_7.conda
   sha256: d016e04b0e12063fbee4a2d5fbb9b39a8d191b5a0042f0b8459188aedeabb0ca
   md5: e2fd202833c4a981ce8a65974fe4abd1
@@ -13839,11 +13838,11 @@ packages:
   - pkg:pypi/setuptools?source=compressed-mapping
   size: 524488
   timestamp: 1786282924579
-- pypi: https://files.pythonhosted.org/packages/47/44/11bf71c36e71936ab4e923e5dd23599dab527c4488b01860b0f689ce9947/shiboken6-6.11.2-cp310-abi3-macosx_13_0_universal2.whl
+- pypi: https://files.pythonhosted.org/packages/6b/ed/eac552326349629f8c3a89b57a754a860d9665aea78c172777395905d36b/shiboken6-6.9.3-cp39-abi3-macosx_12_0_universal2.whl
   name: shiboken6
-  version: 6.11.2
-  sha256: 53659683b1f7a08e9f87eff9b1065f1ceb7110cd7a4bc09fdf5efe43d286604d
-  requires_python: '>=3.10,<3.15'
+  version: 6.9.3
+  sha256: e9b240828790b8e21a50e66449a5aa8b99f9b8a538c80c1a325fa04f8364985e
+  requires_python: '>=3.9,<3.14'
 - conda: https://conda.anaconda.org/conda-forge/linux-64/simdjson-5.0.5-h4dbf13b_0.conda
   sha256: 7c1d22517e62695708aadf088272c6194635d8b1998869f0e9bf95ac01543f26
   md5: c2297d5bc118e70773153ed6fd2b310c

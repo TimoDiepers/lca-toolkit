@@ -41,9 +41,10 @@ pypardiso = "*"
 scikit-umfpack = "*"
 
 # ... and from PyPI on Intel Macs: conda-forge has no qt6-webengine for osx-64, while the
-# PyPI wheels (universal2) bundle their own Qt including WebEngine.
+# PyPI wheels (universal2) bundle their own Qt including WebEngine. <6.10 keeps macOS 12
+# Monterey working (6.10+ wheels need macOS 13; 6.8/6.9 need 12).
 [target.osx-64.pypi-dependencies]
-pyside6 = ">=6.5,<6.12"
+pyside6 = ">=6.5,<6.10"
 
 [pypi-dependencies]
 # Newest beta-branch build at lock time; refresh with `pixi run update-ab`.

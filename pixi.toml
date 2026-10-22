@@ -1,6 +1,6 @@
 [workspace]
 name = "lca-toolkit"
-version = "0.2.1"  # installer version (semver); bump for each release, tag must be v<version>
+version = "0.2.2"  # installer version (semver); bump for each release, tag must be v<version>
 description = "Brightway 2.5 + Activity Browser 3 (beta) + JupyterLab, packaged as one-click installers"
 channels = ["conda-forge"]
 platforms = ["osx-arm64", "osx-64", "win-64", "linux-64"]
